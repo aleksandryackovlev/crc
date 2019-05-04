@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #: Title: crc - Create a react component
-#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-s]
+#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s]
 #: Date: 2019-04-23
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
@@ -8,6 +8,7 @@
 #: Options: -n - component name, default to Component
 #:          -t - type of a component f/c, default to f
 #:          -d - a path to the dir with files templates
+#:          -e - an extention of a main file, default to js
 #:          -s - add css file
 #:          -q - interactive qa
 #:          -m - interactive menu
@@ -17,7 +18,7 @@ scriptName=${0##*/}
 version=0.1.0
 author="Alex Y"
 description="Create a react component"
-usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-s]"
+usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s]"
 
 ## Initialize defaults
 componentName=Component
@@ -27,7 +28,7 @@ addCss=0
 templateDir="$PWD"/template
 
 ## Options
-opts=t:sn:d:qm
+opts=t:sn:d:e:qm
 
 ## Functions
 
@@ -85,7 +86,7 @@ while getopts $opts opt; do
         componentType=classical
       else
         usage
-    die 1 "An unknown component type is given"
+        die 1 "An unknown component type is given"
       fi
       ;;
     s)
@@ -94,8 +95,8 @@ while getopts $opts opt; do
     n)
       case $OPTARG in
         *[!A-Za-z0-9_]*)
-      usage
-      die 1 "A component name should contain only letters, digits and hyphens"
+          usage
+          die 1 "A component name should contain only letters, digits and hyphens"
           ;;
       esac
 
@@ -105,13 +106,23 @@ while getopts $opts opt; do
       templateDir="$OPTARG"
 
       if [[ ! -d templateDir ]]; then
-    usage
-    die 1 "The template directory doesn't exist"
+        usage
+        die 1 "The template directory doesn't exist"
       fi
       ;;
+    e)
+      case $OPTARG in
+        *[!a-z]*)
+          usage
+          die 1 "An invalid file extention"
+          ;;
+      esac
+
+      fileExtention="$OPTARG"
+      ;;
     *)
-    usage
-    die 1 "An unknown options is set"
+      usage
+      die 1 "An unknown options is set"
       ;;
   esac
 done
@@ -122,7 +133,7 @@ componentTemplate="$templateDir"/"$componentType".js
 
 if [[ ! -f $componentTemplate ]]; then
   usage
-  die 1 "The component template file doesn't exist"
+  die 1 "The component's template file doesn't exist"
 fi
 
 if [[ -d "$componentName" ]]; then
@@ -131,8 +142,8 @@ if [[ -d "$componentName" ]]; then
 
   case $isContinue in
     [!yY])
-    die 1 "Stop executing the script"
-    ;;
+      die 1 "Stop executing the script"
+      ;;
   esac
 
   rm -rf "$componentName" || exit 1
@@ -140,7 +151,13 @@ fi
 
 mkdir "$componentName" || exit 1
 
-sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+sedCommands="s/%COMPONENT_NAME%/$componentName/g"
+
+if [[ $addCss -eq 0 ]]; then 
+  sedCommands="$sedCommands""; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+else
+  sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
+fi
 
 sedCommands=$sedCommands'; s/%PROPS%//g'
 
