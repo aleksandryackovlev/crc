@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+#: Title: crc - Create a react component
+#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-s]
+#: Date: 2019-04-23
+#: Version: 0.1.0
+#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: Description: Create a react component
+#: Options: -n - component name, default to Component
+#:          -t - type of a component f/c, default to f
+#:          -d - a path to the dir with files templates
+#:          -s - add css file
+#:          -q - interactive qa
+#:          -m - interactive menu
+
+## Script metadata
+scriptName=${0##*/}
+version=0.1.0
+author="Alex Y"
+description="Create a react component"
+usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-s]"
+
+## Initialize defaults
+componentName=Component
+componentType=functional
+fileExtention=js
+addCss=0
+templateDir="$PWD"/template
+
+## Options
+opts=t:sn:d:qm
+
+## Functions
+
+# DESCRIPTION: Checks if a argument is a number
+# USAGE: isNumber ARGUMENT
+isNumber() {
+  case $1 in
+    *[!0-9]*)
+      false
+    ;;
+    *)
+      true
+    ;;
+  esac
+}
+
+# DESCRIPTION: Print an error message and exit with the given status code
+# USAGE: die STATUS [MESSAGE]
+die() {
+  error="$1"
+
+  if ! isNumber "$error"; then
+	  error=1
+  fi
+
+  shift
+
+  if [[ -n $2 ]]; then
+	  printf "%s\n" "$2" >&2
+  fi
+
+  exit "$error"
+}
+
+# DESCRIPTION: Print the usage information
+# USAGE: usage
+usage() {
+  printf "%s - %s\n" "$scriptName" "$description"
+  printf "USAGE: %s\n" "$usage"
+}
+
+# DESCRIPTION: Print the version information
+# USAGE: version
+version() {
+  printf "%s version %s\n" "$scriptName" "$version"
+  printf "by %s\n" "$author"
+}
+
+while getopts $opts opt; do
+  case $opt in
+    t)
+      if [[ $OPTARG = f ]]; then
+        componentType=functional
+      elif [[ $OPTARG = c ]]; then
+        componentType=classical
+      else
+        usage
+		die 1 "An unknown component type is given"
+      fi
+      ;;
+    s)
+      addCss=1
+      ;;
+    n)
+      case $OPTARG in
+        *[!A-Za-z0-9_]*)
+			usage
+			die 1 "A component name should contain only letters, digits and hyphens"
+          ;;
+      esac
+
+      componentName="${OPTARG^}"
+      ;;
+    d)
+      templateDir="$OPTARG"
+
+      if [[ ! -d templateDir ]]; then
+		usage
+		die 1 "The template directory doesn't exist"
+      fi
+      ;;
+    *)
+		usage
+		die 1 "An unknown options is set"
+      ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
+componentTemplate="$templateDir"/"$componentType".js
+
+if [[ ! -f $componentTemplate ]]; then
+	usage
+	die 1 "The component template file doesn't exist"
+fi
+
+if [[ -d "$componentName" ]]; then
+  read -sn1 -p "The directory already exists. Continue?" isContinue
+  echo
+
+  case $isContinue in
+    [!yY])
+		die 1 "Stop executing the script"
+    ;;
+  esac
+
+  rm -rf "$componentName" || exit 1
+fi
+
+mkdir "$componentName" || exit 1
+
+sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+
+sedCommands=$sedCommands'; s/%PROPS%//g'
+
+sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
+
+echo Done
