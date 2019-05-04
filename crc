@@ -50,13 +50,13 @@ die() {
   error="$1"
 
   if ! isNumber "$error"; then
-	  error=1
+    error=1
   fi
 
   shift
 
   if [[ -n $2 ]]; then
-	  printf "%s\n" "$2" >&2
+    printf "%s\n" "$2" >&2
   fi
 
   exit "$error"
@@ -85,7 +85,7 @@ while getopts $opts opt; do
         componentType=classical
       else
         usage
-		die 1 "An unknown component type is given"
+    die 1 "An unknown component type is given"
       fi
       ;;
     s)
@@ -94,8 +94,8 @@ while getopts $opts opt; do
     n)
       case $OPTARG in
         *[!A-Za-z0-9_]*)
-			usage
-			die 1 "A component name should contain only letters, digits and hyphens"
+      usage
+      die 1 "A component name should contain only letters, digits and hyphens"
           ;;
       esac
 
@@ -105,13 +105,13 @@ while getopts $opts opt; do
       templateDir="$OPTARG"
 
       if [[ ! -d templateDir ]]; then
-		usage
-		die 1 "The template directory doesn't exist"
+    usage
+    die 1 "The template directory doesn't exist"
       fi
       ;;
     *)
-		usage
-		die 1 "An unknown options is set"
+    usage
+    die 1 "An unknown options is set"
       ;;
   esac
 done
@@ -121,8 +121,8 @@ shift $((OPTIND - 1))
 componentTemplate="$templateDir"/"$componentType".js
 
 if [[ ! -f $componentTemplate ]]; then
-	usage
-	die 1 "The component template file doesn't exist"
+  usage
+  die 1 "The component template file doesn't exist"
 fi
 
 if [[ -d "$componentName" ]]; then
@@ -131,7 +131,7 @@ if [[ -d "$componentName" ]]; then
 
   case $isContinue in
     [!yY])
-		die 1 "Stop executing the script"
+    die 1 "Stop executing the script"
     ;;
   esac
 
