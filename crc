@@ -135,6 +135,7 @@ done
 shift $((OPTIND - 1))
 
 componentTemplate="$templateDir"/"$componentType".js
+stylesTemplate="$templateDir"/css.css
 
 if [[ ! -f $componentTemplate ]]; then
   usage
@@ -180,11 +181,20 @@ else
 
   if [[ $addCss -eq 1 ]]; then 
     sedCommands="$sedCommands""; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+
+    if [[ ! -f $stylesTemplate ]]; then
+      usage
+      die 1 "The css template file doesn't exist"
+    fi
+
+    sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$componentName"/index.css
   else
     sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
   fi
 
   sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
+
+  printf "%s" "export { default } from './$componentName'" > "$componentName"/index.js
 fi
 
 echo Done
