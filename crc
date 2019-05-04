@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #: Title: crc - Create a react component
-#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s]
+#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f]
 #: Date: 2019-04-23
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
@@ -8,7 +8,8 @@
 #: Options: -n - component name, default to Component
 #:          -t - type of a component f/c, default to f
 #:          -d - a path to the dir with files templates
-#:          -e - an extention of a main file, default to js
+#:          -e - the extention of a main file, default to js
+#:          -f - create only a file
 #:          -s - add css file
 #:          -q - interactive qa
 #:          -m - interactive menu
@@ -18,17 +19,18 @@ scriptName=${0##*/}
 version=0.1.0
 author="Alex Y"
 description="Create a react component"
-usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s]"
+usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f]"
 
 ## Initialize defaults
 componentName=Component
+createFileComponent=0
 componentType=functional
 fileExtention=js
 addCss=0
 templateDir="$PWD"/template
 
 ## Options
-opts=t:sn:d:e:qm
+opts=t:sn:d:e:fqm
 
 ## Functions
 
@@ -120,6 +122,9 @@ while getopts $opts opt; do
 
       fileExtention="$OPTARG"
       ;;
+    f)
+      createFileComponent=1
+      ;;
     *)
       usage
       die 1 "An unknown options is set"
@@ -136,31 +141,50 @@ if [[ ! -f $componentTemplate ]]; then
   die 1 "The component's template file doesn't exist"
 fi
 
-if [[ -d "$componentName" ]]; then
-  read -sn1 -p "The directory already exists. Continue?" isContinue
-  echo
+if [[ $createFileComponent -eq 1 ]]; then
+  componentFile="$componentName"."$fileExtention"
 
-  case $isContinue in
-    [!yY])
-      die 1 "Stop executing the script"
-      ;;
-  esac
+  if [[ -f "$componentFile". ]]; then
+    read -sn1 -p "The file already exists. Continue?" isContinue
+    echo
 
-  rm -rf "$componentName" || exit 1
-fi
+    case $isContinue in
+      [!yY])
+        die 1 "Stop executing the script"
+        ;;
+    esac
 
-mkdir "$componentName" || exit 1
+    rm -f "$componentFile" || exit 1
+  fi
 
-sedCommands="s/%COMPONENT_NAME%/$componentName/g"
+  sedCommands="s/%COMPONENT_NAME%/$componentName/g; /%CSS_IMPORT%/d; s/%PROPS%//g"
 
-if [[ $addCss -eq 0 ]]; then 
-  sedCommands="$sedCommands""; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+  sed "$sedCommands" "$componentTemplate" > "$componentFile"
 else
-  sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
+  if [[ -d "$componentName" ]]; then
+    read -sn1 -p "The directory already exists. Continue?" isContinue
+    echo
+
+    case $isContinue in
+      [!yY])
+        die 1 "Stop executing the script"
+        ;;
+    esac
+
+    rm -rf "$componentName" || exit 1
+  fi
+
+  mkdir "$componentName" || exit 1
+
+  sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%PROPS%//g"
+
+  if [[ $addCss -eq 1 ]]; then 
+    sedCommands="$sedCommands""; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+  else
+    sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
+  fi
+
+  sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
 fi
-
-sedCommands=$sedCommands'; s/%PROPS%//g'
-
-sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
 
 echo Done
