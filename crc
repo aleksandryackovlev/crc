@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #: Title: crc - Create a react component
-#: Synopsis: crc -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f]
+#: Synopsis: crc [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME 
 #: Date: 2019-04-23
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
@@ -19,7 +19,7 @@ scriptName=${0##*/}
 version=0.1.0
 author="Alex Y"
 description="Create a react component"
-usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f]"
+usage="$scriptName [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME"
 
 ## Exit codes
 successCode=0
@@ -28,7 +28,7 @@ misuseErrorCode=2
 cannotExecuteErrorCode=126
 
 ## Initialize defaults
-componentName=Component
+componentName=
 createFileComponent=0
 componentType=functional
 fileExtention=js
@@ -36,7 +36,7 @@ addCss=0
 templateDir="$PWD"/template
 
 ## Options
-opts=t:sn:d:e:fqm
+opts=t:sd:e:fqm
 
 ## Functions
 
@@ -98,16 +98,6 @@ while getopts $opts opt; do
     s)
       addCss=1
       ;;
-    n)
-      case $OPTARG in
-        *[!A-Za-z0-9_]*)
-          usage
-          die "$misuseErrorCode" "A component name should contain only letters, digits and hyphens"
-          ;;
-      esac
-
-      componentName="${OPTARG^}"
-      ;;
     d)
       templateDir="$OPTARG"
 
@@ -137,6 +127,20 @@ while getopts $opts opt; do
 done
 
 shift $((OPTIND - 1))
+
+componentName="${1^}"
+
+if [[ -z $componentName ]]; then
+    usage
+    die "$misuseErrorCode" "A component name is required"
+fi
+
+case $componentName in
+  *[!A-Za-z0-9_]*)
+    usage
+    die "$misuseErrorCode" "A component name should contain only letters, digits and hyphens"
+    ;;
+esac
 
 componentTemplate="$templateDir"/"$componentType".js
 stylesTemplate="$templateDir"/css.css
