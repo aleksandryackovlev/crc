@@ -21,6 +21,12 @@ author="Alex Y"
 description="Create a react component"
 usage="$scriptName -n COMPONENT_NAME [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f]"
 
+## Exit codes
+successCode=0
+generalErrorCode=1
+misuseErrorCode=2
+cannotExecuteErrorCode=126
+
 ## Initialize defaults
 componentName=Component
 createFileComponent=0
@@ -53,10 +59,8 @@ die() {
   error="$1"
 
   if ! isNumber "$error"; then
-    error=1
+    error="$generalErrorCode"
   fi
-
-  shift
 
   if [[ -n $2 ]]; then
     printf "%s\n" "$2" >&2
@@ -88,7 +92,7 @@ while getopts $opts opt; do
         componentType=classical
       else
         usage
-        die 1 "An unknown component type is given"
+        die "$misuseErrorCode" "An unknown component type is given"
       fi
       ;;
     s)
@@ -98,7 +102,7 @@ while getopts $opts opt; do
       case $OPTARG in
         *[!A-Za-z0-9_]*)
           usage
-          die 1 "A component name should contain only letters, digits and hyphens"
+          die "$misuseErrorCode" "A component name should contain only letters, digits and hyphens"
           ;;
       esac
 
@@ -109,14 +113,14 @@ while getopts $opts opt; do
 
       if [[ ! -d templateDir ]]; then
         usage
-        die 1 "The template directory doesn't exist"
+        die "$misuseErrorCode" "The template directory doesn't exist"
       fi
       ;;
     e)
       case $OPTARG in
         *[!a-z]*)
           usage
-          die 1 "An invalid file extention"
+          die "$misuseErrorCode" "An invalid file extention"
           ;;
       esac
 
@@ -127,7 +131,7 @@ while getopts $opts opt; do
       ;;
     *)
       usage
-      die 1 "An unknown options is set"
+      die "$misuseErrorCode" "An unknown options is set"
       ;;
   esac
 done
@@ -139,7 +143,7 @@ stylesTemplate="$templateDir"/css.css
 
 if [[ ! -f $componentTemplate ]]; then
   usage
-  die 1 "The component's template file doesn't exist"
+  die "$generalErrorCode" "The component's template file doesn't exist"
 fi
 
 if [[ $createFileComponent -eq 1 ]]; then
@@ -151,11 +155,11 @@ if [[ $createFileComponent -eq 1 ]]; then
 
     case $isContinue in
       [!yY])
-        die 1 "Stop executing the script"
+        die "$successCode" "Stop executing the script"
         ;;
     esac
 
-    rm -f "$componentFile" || exit 1
+    rm -f "$componentFile" || die "$cannotExecuteErrorCode" "The file can't be deleted"
   fi
 
   sedCommands="s/%COMPONENT_NAME%/$componentName/g; /%CSS_IMPORT%/d; s/%PROPS%//g"
@@ -168,14 +172,14 @@ else
 
     case $isContinue in
       [!yY])
-        die 1 "Stop executing the script"
+        die "$generalErrorCode" "Stop executing the script"
         ;;
     esac
 
-    rm -rf "$componentName" || exit 1
+    rm -rf "$componentName" || die "$cannotExecuteErrorCode" "The directory can't be deleted"
   fi
 
-  mkdir "$componentName" || exit 1
+  mkdir "$componentName" || die "$cannotExecuteErrorCode" "The directory can't be created"
 
   sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%PROPS%//g"
 
@@ -184,7 +188,7 @@ else
 
     if [[ ! -f $stylesTemplate ]]; then
       usage
-      die 1 "The css template file doesn't exist"
+      die "$cannotExecuteErrorCode" "The css template file doesn't exist"
     fi
 
     sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$componentName"/index.css
