@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#: Title: crc-config - CRUD for configuration files
+#: Date: 2019-04-23
+#: Version: 0.1.0
+#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: Description: CRUD for configuration files
+
+configFileName=.crcrc
+globalConfigFile="$HOME/$configFileName"
+
+readGlobalConfig() {
+  local globalConfigFile
+  if [[ -f $globalConfigFile ]]; then
+    source "$globalConfigFile"
+  fi
+}
+
+readLocalConfig() {
+  local currentDir
+  local localConfigFile
+
+  currentDir="$PWD"
+  localConfigFile="$currentDir/$configFileName"
+
+
+  while [[ ! $currentDir = "$HOME" && -n $currentDir && ! -f $localConfigFile ]]; do 
+    printf "%s\n" "$currentDir" "$localConfigFile"
+
+    currentDir="${currentDir%/*}"
+    localConfigFile="$currentDir/$configFileName"
+  done
+
+  if [[ -f $localConfigFile ]]; then
+    source "$localConfigFile"
+  fi
+}
