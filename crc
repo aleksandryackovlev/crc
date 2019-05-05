@@ -14,6 +14,10 @@
 #:          -q - interactive qa
 #:          -m - interactive menu
 
+crcDirectory=$(dirname "$0")
+
+source "$crcDirectory/bin/crc-config"
+
 ## Script metadata
 scriptName=${0##*/}
 version=0.1.0
@@ -33,7 +37,7 @@ createFileComponent=0
 componentType=functional
 fileExtention=js
 addCss=0
-templateDir="$PWD"/template
+templateDir="$crcDirectory"/template
 
 ## Options
 opts=t:sd:e:fqm
