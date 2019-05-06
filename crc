@@ -17,13 +17,15 @@ source ./bin/crc-env
 source ./bin/crc-config
 source ./bin/crc-utils
 
+readConfig
+
 ## Initialize defaults
 componentName=
-createFileComponent=0
-componentType=functional
-fileExtention=js
-addCss=0
-templateDir=./template
+createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
+componentType="${componentType:-$defaultComponentType}"
+fileExtention="${fileExtention:-$defaultFileExtention}"
+addCss="${addCss:-$defaultAddCss}"
+templateDir="${templateDir:-$defaultTemplateDir}"
 
 ## Options
 opts=t:sd:e:fqm

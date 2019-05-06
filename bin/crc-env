@@ -21,3 +21,11 @@ export cannotExecuteErrorCode=126
 ## Files
 export configFileName=.crcrc
 export globalConfigFile="$HOME/$configFileName"
+
+## Default config
+export defaultCreateFileComponent=0
+export defaultComponentType=functional
+export defaultFileExtention=js
+export defaultAddCss=0
+export defaultTemplateDir=./template
+
