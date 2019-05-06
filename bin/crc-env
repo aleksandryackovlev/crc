@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#: Title: crc-env - Environment variables
+#: Date: 2019-04-23
+#: Version: 0.1.0
+#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: Description: Environment variables
+
+## Script metadata
+export scriptName=${0##*/}
+export version=0.1.0
+export author="Alex Y"
+export description="Create a react component"
+export usage="$scriptName [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME"
+
+## Exit codes
+export successCode=0
+export generalErrorCode=1
+export misuseErrorCode=2
+export cannotExecuteErrorCode=126
+
+## Files
+export configFileName=.crcrc
+export globalConfigFile="$HOME/$configFileName"
