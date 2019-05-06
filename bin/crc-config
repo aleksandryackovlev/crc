@@ -5,16 +5,18 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: CRUD for configuration files
 
-configFileName=.crcrc
-globalConfigFile="$HOME/$configFileName"
+source ./bin/crc-env
 
+# DESCRIPTION: Sources the global config file if it exists
+# USAGE: readGlobalConfig
 readGlobalConfig() {
-  local globalConfigFile
   if [[ -f $globalConfigFile ]]; then
     source "$globalConfigFile"
   fi
 }
 
+# DESCRIPTION: Sources the local config file if it exists
+# USAGE: readLocalConfig
 readLocalConfig() {
   local currentDir
   local localConfigFile
