@@ -36,3 +36,10 @@ readLocalConfig() {
     source "$localConfigFile"
   fi
 }
+
+# DESCRIPTION: Sources the both config files if they exist
+# USAGE: readConfig
+readConfig() {
+  readGlobalConfig
+  readLocalConfig
+}
