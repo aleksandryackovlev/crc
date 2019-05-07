@@ -18,6 +18,10 @@ export generalErrorCode=1
 export misuseErrorCode=2
 export cannotExecuteErrorCode=126
 
+## Directories
+export crcDirectory="$HOME/.crc"
+export templateDirectory="$crcDirectory/template"
+
 ## Files
 export configFileName=.crcrc
 export globalConfigFile="$HOME/$configFileName"
@@ -27,5 +31,5 @@ export defaultCreateFileComponent=0
 export defaultComponentType=functional
 export defaultFileExtention=js
 export defaultAddCss=0
-export defaultTemplateDir=./template
+export defaultTemplate=default
 

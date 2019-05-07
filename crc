@@ -13,9 +13,11 @@
 #:          -q - interactive qa
 #:          -m - interactive menu
 
-source ./bin/crc-env
-source ./bin/crc-config
-source ./bin/crc-utils
+crcDirectory="$HOME/.crc"
+
+source "${crcDirectory}/bin/crc-env"
+source "${crcDirectory}/bin/crc-config"
+source "${crcDirectory}/bin/crc-utils"
 
 readConfig
 
@@ -25,10 +27,12 @@ createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
 componentType="${componentType:-$defaultComponentType}"
 fileExtention="${fileExtention:-$defaultFileExtention}"
 addCss="${addCss:-$defaultAddCss}"
-templateDir="${templateDir:-$defaultTemplateDir}"
+template="${template:-$defaultTemplate}"
+
+templateDir="$templateDirectory/$template"
 
 ## Options
-opts=t:sd:e:fqm
+opts=c:t:se:fqm
 
 ## Functions
 
@@ -48,7 +52,7 @@ version() {
 
 while getopts $opts opt; do
   case $opt in
-    t)
+    c)
       if [[ $OPTARG = f ]]; then
         componentType=functional
       elif [[ $OPTARG = c ]]; then
@@ -58,16 +62,17 @@ while getopts $opts opt; do
         die "$misuseErrorCode" "An unknown component type is given"
       fi
       ;;
-    s)
-      addCss=1
-      ;;
-    d)
-      templateDir="$OPTARG"
+    t)
+      template="$OPTARG"
+      templateDir="$templateDirectory/$template"
 
-      if [[ ! -d templateDir ]]; then
+      if [[ ! -d $templateDir ]]; then
         usage
         die "$misuseErrorCode" "The template directory doesn't exist"
       fi
+      ;;
+    s)
+      addCss=1
       ;;
     e)
       case $OPTARG in
@@ -151,7 +156,7 @@ else
   sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%PROPS%//g"
 
   if [[ $addCss -eq 1 ]]; then 
-    sedCommands="$sedCommands""; s/%CSS_IMPORT%/import from '.\/index.css';/g"
+    sedCommands="$sedCommands""; s/%CSS_IMPORT%/import '.\/index.css';/g"
 
     if [[ ! -f $stylesTemplate ]]; then
       usage
@@ -165,7 +170,7 @@ else
 
   sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
 
-  printf "%s" "export { default } from './$componentName'" > "$componentName"/index.js
+  printf "%s" "export { default } from './$componentName';" > "$componentName"/index.js
 fi
 
 echo Done

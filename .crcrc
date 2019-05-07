@@ -2,4 +2,4 @@ createFileComponent=0
 componentType=functional
 fileExtention=js
 addCss=0
-templateDir=./template
+template=default
