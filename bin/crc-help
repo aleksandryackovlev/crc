@@ -4,3 +4,49 @@
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Help information
+
+source ./crc-env
+source ./crc-utils
+
+# DESCRIPTION: Print the usage information
+# USAGE: usage
+showUsageInfo() {
+  printf "%s - %s\n" "$scriptName" "$description"
+  printf "USAGE: %s\n" "$usage"
+}
+
+# DESCRIPTION: Print the version information
+# USAGE: version
+showVersionInfo() {
+  printf "%s version %s\n" "$scriptName" "$version"
+  printf "by %s\n" "$author"
+}
+
+
+crc-help() {
+  local commandToExec
+
+  commandToExec=$1
+  shift
+
+  if [[ -z $commandToExec ]]; then
+    showUsageInfo
+    die "$successCode"
+  fi
+
+  case $commandToExec in
+    usage)
+        showUsageInfo
+        die "$successCode"
+      ;;
+    version)
+        showVersionInfo
+        die "$successCode"
+      ;;
+    *)
+        die "$misuseErrorCode" "An unknown command crc-help ""$commandToExec"
+      ;;
+  esac
+}
+
+showUsageInfo

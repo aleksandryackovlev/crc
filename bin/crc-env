@@ -6,7 +6,7 @@
 #: Description: Environment variables
 
 ## Script metadata
-export scriptName=${0##*/}
+export scriptName=crc
 export version=0.1.0
 export author="Alex Y"
 export description="Create a react component"
