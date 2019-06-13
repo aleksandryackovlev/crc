@@ -32,4 +32,3 @@ export defaultComponentType=functional
 export defaultFileExtention=js
 export defaultAddCss=0
 export defaultTemplate=default
-
