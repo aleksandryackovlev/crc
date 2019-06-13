@@ -5,6 +5,9 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Utils functions
 
+source ./crc-env
+source ./crc-help
+
 # DESCRIPTION: Checks if a argument is a number
 # USAGE: isNumber ARGUMENT
 isNumber() {
@@ -21,6 +24,8 @@ isNumber() {
 # DESCRIPTION: Print an error message and exit with the given status code
 # USAGE: die STATUS [MESSAGE]
 die() {
+  local error
+
   error="$1"
 
   if ! isNumber "$error"; then
@@ -32,4 +37,23 @@ die() {
   fi
 
   exit "$error"
+}
+
+crc-utils() {
+  local command
+
+  command=$1
+  shift
+
+  case $command in
+    die)
+        die "$@"
+      ;;
+    isNumber)
+        isNumber "$1"
+      ;;
+    *)
+        die "$misuseErrorCode" "An unknown command crc-utils ""$command"
+      ;;
+  esac
 }
