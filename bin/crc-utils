@@ -6,7 +6,6 @@
 #: Description: Utils functions
 
 source ./crc-env
-source ./crc-help
 
 # DESCRIPTION: Checks if a argument is a number
 # USAGE: isNumber ARGUMENT
@@ -39,13 +38,14 @@ die() {
   exit "$error"
 }
 
-crc-utils() {
-  local command
 
-  command=$1
+crc-utils() {
+  local commandToExec
+
+  commandToExec=$1
   shift
 
-  case $command in
+  case $commandToExec in
     die)
         die "$@"
       ;;
@@ -53,7 +53,7 @@ crc-utils() {
         isNumber "$1"
       ;;
     *)
-        die "$misuseErrorCode" "An unknown command crc-utils ""$command"
+        die "$misuseErrorCode" "An unknown command crc-utils ""$commandToExec"
       ;;
   esac
 }
