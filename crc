@@ -1,160 +1,36 @@
 #!/usr/bin/env bash
 #: Title: crc - Create a react component
-#: Synopsis: crc [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME 
 #: Date: 2019-04-23
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Create a react component
-#: Options: -t - type of a component f/c, default to f
-#:          -d - a path to the dir with files templates
-#:          -e - the extention of a main file, default to js
-#:          -f - create only a file
-#:          -s - add css file
-#:          -q - interactive qa
-#:          -m - interactive menu
 
 crcDirectory="$HOME/.crc"
 
 source "${crcDirectory}/bin/crc-env"
+source "${crcDirectory}/bin/crc-create"
 source "${crcDirectory}/bin/crc-config"
+source "${crcDirectory}/bin/crc-template"
+source "${crcDirectory}/bin/crc-help"
 source "${crcDirectory}/bin/crc-utils"
 
-readConfig
+command=$1
+shift
 
-## Initialize defaults
-componentName=
-createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
-componentType="${componentType:-$defaultComponentType}"
-fileExtention="${fileExtention:-$defaultFileExtention}"
-addCss="${addCss:-$defaultAddCss}"
-template="${template:-$defaultTemplate}"
-
-templateDir="$templateDirectory/$template"
-
-## Options
-opts=c:t:se:fqm
-
-while getopts $opts opt; do
-  case $opt in
-    c)
-      if [[ $OPTARG = f ]]; then
-        componentType=functional
-      elif [[ $OPTARG = c ]]; then
-        componentType=classical
-      else
-        showUsageInfo
-        die "$misuseErrorCode" "An unknown component type is given"
-      fi
-      ;;
-    t)
-      template="$OPTARG"
-      templateDir="$templateDirectory/$template"
-
-      if [[ ! -d $templateDir ]]; then
-        showUsageInfo
-        die "$misuseErrorCode" "The template directory doesn't exist"
-      fi
-      ;;
-    s)
-      addCss=1
-      ;;
-    e)
-      case $OPTARG in
-        *[!a-z]*)
-          showUsageInfo
-          die "$misuseErrorCode" "An invalid file extention"
-          ;;
-      esac
-
-      fileExtention="$OPTARG"
-      ;;
-    f)
-      createFileComponent=1
-      ;;
-    *)
-      showUsageInfo
-      die "$misuseErrorCode" "An unknown options is set"
-      ;;
-  esac
-done
-
-shift $((OPTIND - 1))
-
-componentName="${1^}"
-
-if [[ -z $componentName ]]; then
-    showUsageInfo
-    die "$misuseErrorCode" "A component name is required"
-fi
-
-case $componentName in
-  *[!A-Za-z0-9_]*)
-    showUsageInfo
-    die "$misuseErrorCode" "A component name should contain only letters, digits and hyphens"
+case $command in
+  create)
+      crc-create "$@"
+    ;;
+  config)
+      crc-config "$@"
+    ;;
+  template)
+      crc-template "$@"
+    ;;
+  help)
+      crc-help "$@"
+    ;;
+  *)
+      crc-utils die "$misuseErrorCode" "An unknown command ""$command"
     ;;
 esac
-
-componentTemplate="$templateDir"/"$componentType".js
-stylesTemplate="$templateDir"/css.css
-
-if [[ ! -f $componentTemplate ]]; then
-  showUsageInfo
-  die "$generalErrorCode" "The component's template file doesn't exist"
-fi
-
-if [[ $createFileComponent -eq 1 ]]; then
-  componentFile="$componentName"."$fileExtention"
-
-  if [[ -f "$componentFile". ]]; then
-    read -sn1 -p "The file already exists. Continue?" isContinue
-    echo
-
-    case $isContinue in
-      [!yY])
-        die "$successCode" "Stop executing the script"
-        ;;
-    esac
-
-    rm -f "$componentFile" || die "$cannotExecuteErrorCode" "The file can't be deleted"
-  fi
-
-  sedCommands="s/%COMPONENT_NAME%/$componentName/g; /%CSS_IMPORT%/d; s/%PROPS%//g"
-
-  sed "$sedCommands" "$componentTemplate" > "$componentFile"
-else
-  if [[ -d "$componentName" ]]; then
-    read -sn1 -p "The directory already exists. Continue?" isContinue
-    echo
-
-    case $isContinue in
-      [!yY])
-        die "$generalErrorCode" "Stop executing the script"
-        ;;
-    esac
-
-    rm -rf "$componentName" || die "$cannotExecuteErrorCode" "The directory can't be deleted"
-  fi
-
-  mkdir "$componentName" || die "$cannotExecuteErrorCode" "The directory can't be created"
-
-  sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%PROPS%//g"
-
-  if [[ $addCss -eq 1 ]]; then 
-    sedCommands="$sedCommands""; s/%CSS_IMPORT%/import '.\/index.css';/g"
-
-    if [[ ! -f $stylesTemplate ]]; then
-      showUsageInfo
-      die "$cannotExecuteErrorCode" "The css template file doesn't exist"
-    fi
-
-    sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$componentName"/index.css
-  else
-    sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
-  fi
-
-  sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
-
-  printf "%s" "export { default } from './$componentName';" > "$componentName"/index.js
-fi
-
-echo Done
