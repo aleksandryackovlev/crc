@@ -5,7 +5,8 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: CRUD for configuration files
 
-source ./bin/crc-env
+source ./crc-env
+source ./crc-utils
 
 # DESCRIPTION: Sources the global config file if it exists
 # USAGE: readGlobalConfig
@@ -42,4 +43,21 @@ readLocalConfig() {
 readConfig() {
   readGlobalConfig
   readLocalConfig
+}
+
+# DESCRIPTION: The entry point for the crc-config
+# USAGE: crc-config COMMAND
+crc-config() {
+  local commandToExec
+  commandToExec="$1"
+  shift
+
+  case $commandToExec in
+    read)
+        readConfig "$@"
+      ;;
+    *)
+        crc-utils die "$misuseErrorCode" "An unknown command crc-config ""$commandToExec"
+      ;;
+  esac
 }
