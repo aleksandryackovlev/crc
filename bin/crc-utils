@@ -38,11 +38,11 @@ die() {
   exit "$error"
 }
 
-
+# DESCRIPTION: The entry point for the utils functions
+# USAGE: crc-utils [COMMAND]
 crc-utils() {
   local commandToExec
-
-  commandToExec=$1
+  commandToExec="$1"
   shift
 
   case $commandToExec in
