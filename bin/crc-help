@@ -22,11 +22,11 @@ showVersionInfo() {
   printf "by %s\n" "$author"
 }
 
-
+# DESCRIPTION: The entry point for the crc-help
+# USAGE: crc-help [COMMAND]
 crc-help() {
   local commandToExec
-
-  commandToExec=$1
+  commandToExec="$1"
   shift
 
   if [[ -z $commandToExec ]]; then
