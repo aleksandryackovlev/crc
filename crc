@@ -14,10 +14,10 @@ source "${crcDirectory}/bin/crc-template"
 source "${crcDirectory}/bin/crc-help"
 source "${crcDirectory}/bin/crc-utils"
 
-command=$1
+commandToExec=$1
 shift
 
-case $command in
+case $commandToExec in
   create)
       crc-create "$@"
     ;;
@@ -31,6 +31,6 @@ case $command in
       crc-help "$@"
     ;;
   *)
-      crc-utils die "$misuseErrorCode" "An unknown command ""$command"
+      crc-utils die "$(crc-env misuseErrorCode)" "An unknown command ""$commandToExec"
     ;;
 esac
