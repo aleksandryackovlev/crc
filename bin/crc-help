@@ -13,15 +13,15 @@ source ./crc-utils
 # DESCRIPTION: Print the usage information
 # USAGE: usage
 showUsageInfo() {
-  printf "%s - %s\n" "$scriptName" "$description"
-  printf "USAGE: %s\n" "$usage"
+  printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
+  printf "USAGE: %s\n" "$(crc-env usage)"
 }
 
 # DESCRIPTION: Print the version information
 # USAGE: version
 showVersionInfo() {
-  printf "%s version %s\n" "$scriptName" "$version"
-  printf "by %s\n" "$author"
+  printf "%s version %s\n" "$(crc-env scriptName)" "$(crc-env version)"
+  printf "by %s\n" "$(crc-env author)"
 }
 
 # DESCRIPTION: The entry point for the crc-help
@@ -33,20 +33,20 @@ crc-help() {
 
   if [[ -z $commandToExec ]]; then
     showUsageInfo
-    die "$successCode"
+    die "$(crc-env successCode)"
   fi
 
   case $commandToExec in
     usage)
         showUsageInfo
-        die "$successCode"
+        die "$(crc-env successCode)"
       ;;
     version)
         showVersionInfo
-        die "$successCode"
+        die "$(crc-env successCode)"
       ;;
     *)
-        die "$misuseErrorCode" "An unknown command crc-help ""$commandToExec"
+        die "$(crc-env misuseErrorCode)" "An unknown command crc-help ""$commandToExec"
       ;;
   esac
 }

@@ -35,4 +35,8 @@ export defaultFileExtention=js
 export defaultAddCss=0
 export defaultTemplate=default
 
+crc-env() {
+  echo "${!1}"
+}
+
 crcEnvLoaded=1

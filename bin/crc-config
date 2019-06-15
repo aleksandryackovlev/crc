@@ -5,7 +5,7 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: CRUD for configuration files
 
-[[ $crcUtilsLoaded ]] && return
+[[ $crcConfigLoaded ]] && return
 
 source ./crc-env
 source ./crc-utils
@@ -13,8 +13,8 @@ source ./crc-utils
 # DESCRIPTION: Sources the global config file if it exists
 # USAGE: readGlobalConfig
 readGlobalConfig() {
-  if [[ -f $globalConfigFile ]]; then
-    source "$globalConfigFile"
+  if [[ -f $(crc-env globalConfigFile) ]]; then
+    source "$(crc-env globalConfigFile)"
   fi
 }
 
@@ -25,14 +25,14 @@ readLocalConfig() {
   local localConfigFile
 
   currentDir="$PWD"
-  localConfigFile="$currentDir/$configFileName"
+  localConfigFile="$currentDir/$(crc-env configFileName)"
 
 
   while [[ ! $currentDir = "$HOME" && -n $currentDir && ! -f $localConfigFile ]]; do 
     printf "%s\n" "$currentDir" "$localConfigFile"
 
     currentDir="${currentDir%/*}"
-    localConfigFile="$currentDir/$configFileName"
+    localConfigFile="$currentDir/$(crc-env configFileName)"
   done
 
   if [[ -f $localConfigFile ]]; then
@@ -59,9 +59,9 @@ crc-config() {
         readConfig "$@"
       ;;
     *)
-        crc-utils die "$misuseErrorCode" "An unknown command crc-config ""$commandToExec"
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-config ""$commandToExec"
       ;;
   esac
 }
 
-crcUtilsLoaded=1
+crcConfigLoaded=1

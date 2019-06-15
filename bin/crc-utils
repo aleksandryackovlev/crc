@@ -30,7 +30,7 @@ die() {
   error="$1"
 
   if ! isNumber "$error"; then
-    error="$generalErrorCode"
+    error="$(crc-env generalErrorCode)"
   fi
 
   if [[ -n $2 ]]; then
@@ -55,7 +55,7 @@ crc-utils() {
         isNumber "$1"
       ;;
     *)
-        die "$misuseErrorCode" "An unknown command crc-utils ""$commandToExec"
+        die "$(crc-env misuseErrorCode)" "An unknown command crc-utils ""$commandToExec"
       ;;
   esac
 }
