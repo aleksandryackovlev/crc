@@ -5,6 +5,8 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Help information
 
+[[ $crcHelpLoaded ]] && return
+
 source ./crc-env
 source ./crc-utils
 
@@ -49,4 +51,4 @@ crc-help() {
   esac
 }
 
-showUsageInfo
+crcHelpLoaded=1

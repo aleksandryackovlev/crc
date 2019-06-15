@@ -5,6 +5,8 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: CRUD for configuration files
 
+[[ $crcUtilsLoaded ]] && return
+
 source ./crc-env
 source ./crc-utils
 
@@ -61,3 +63,5 @@ crc-config() {
       ;;
   esac
 }
+
+crcUtilsLoaded=1

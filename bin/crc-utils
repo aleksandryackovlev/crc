@@ -5,6 +5,8 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Utils functions
 
+[[ $crcUtilsLoaded ]] && return
+
 source ./crc-env
 
 # DESCRIPTION: Checks if a argument is a number
@@ -57,3 +59,5 @@ crc-utils() {
       ;;
   esac
 }
+
+crcUtilsLoaded=1

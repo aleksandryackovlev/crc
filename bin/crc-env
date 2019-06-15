@@ -5,6 +5,8 @@
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Environment variables
 
+[[ $crcEnvLoaded ]] && return
+
 ## Script metadata
 export scriptName=crc
 export version=0.1.0
@@ -32,3 +34,5 @@ export defaultComponentType=functional
 export defaultFileExtention=js
 export defaultAddCss=0
 export defaultTemplate=default
+
+crcEnvLoaded=1
