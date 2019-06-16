@@ -35,6 +35,27 @@ teardown() {
   [ "$componentType" = classical ]
 }
 
+# findLocalConfig test cases
+@test "[crc-config] findLocalConfig: should find the local config file" {
+  run findLocalConfig
+  configFile="$PWD"/.crcrc
+
+  [ "$output" = "$configFile" ]
+}
+
+# getEditor test cases
+@test "[crc-config] getEditor: should return an editor if it is set" {
+  EDITOR=vim
+  run getEditor
+  [ "$output" = vim ]
+}
+
+@test "[crc-config] getEditor: should return vi as a default editor if it is not set" {
+  EDITOR=
+  run getEditor
+  [ "$output" = vi ]
+}
+
 # readConfig test cases
 @test "[crc-config] readConfig: should read the variables from the global and the local config files" {
   readConfig

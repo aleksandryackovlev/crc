@@ -18,24 +18,36 @@ readGlobalConfig() {
   fi
 }
 
-# DESCRIPTION: Sources the local config file if it exists
-# USAGE: readLocalConfig
-readLocalConfig() {
+
+# DESCRIPTION: Finds the local config file if it exists
+# USAGE: findLocalConfig
+findLocalConfig() {
   local currentDir
   local localConfigFile
 
   currentDir="$PWD"
   localConfigFile="$currentDir/$(crc-env configFileName)"
 
-
   while [[ ! $currentDir = "$HOME" && -n $currentDir && ! -f $localConfigFile ]]; do 
-    printf "%s\n" "$currentDir" "$localConfigFile"
-
     currentDir="${currentDir%/*}"
     localConfigFile="$currentDir/$(crc-env configFileName)"
   done
 
   if [[ -f $localConfigFile ]]; then
+    printf "%s" "$localConfigFile"
+  else
+    echo ''
+  fi
+}
+
+# DESCRIPTION: Sources the local config file if it exists
+# USAGE: readLocalConfig
+readLocalConfig() {
+  local localConfigFile
+
+  localConfigFile="$(findLocalConfig)"
+
+  if [[ -n $localConfigFile ]]; then
     source "$localConfigFile"
   fi
 }
@@ -47,6 +59,75 @@ readConfig() {
   readLocalConfig
 }
 
+# DESCRIPTION: Returns the active editor
+# USAGE: getEditor
+getEditor() {
+  local currentEditor
+
+  if [[ $EDITOR ]]; then 
+    currentEditor="$EDITOR"
+  else
+    currentEditor=vi
+  fi
+
+  printf "%s" "$currentEditor"
+}
+
+# DESCRIPTION: Edits a local config file
+# USAGE: editConfigFile
+editConfigFile() {
+  local localConfigFile
+  local currentEditor
+
+  localConfigFile="$(getLoclaConfig)"
+  currentEditor="$(getEditor)"
+
+  if [[ -z $localConfigFile ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "A local config file doesn't exist"
+  fi
+
+  "$currentEditor" "$localConfigFile"
+}
+
+# DESCRIPTION: Creates a local config file
+# USAGE: createConfigFile [DIRECTORY]
+createConfigFile() {
+  local directory
+  local localConfigFile
+  local currentEditor
+
+  directory="${1:-$PWD}"
+
+  if [[ ! -d $directory ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "A directory $directory doesn't exist"
+  fi
+
+  localConfigFile="$directory/$(crc-env configFileName)"
+
+  if [[ -f $localConfigFile ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "A file $localConfigFile alredy exists"
+  fi
+
+  currentEditor="$(getEditor)"
+
+  printf "createFileComponent=0\ncomponentType=functional\nfileExtention=js\naddCss=0\ntemplate=default" > "$localConfigFile"
+
+  "$currentEditor" "$localConfigFile"
+}
+
+# DESCRIPTION: Deletes a local config file
+# USAGE: deleteConfigFile
+deleteConfigFile() {
+  local localConfigFile
+
+  localConfigFile="$(getLoclaConfig)"
+
+  if [[ -f $localConfigFile ]]; then
+    rm "$localConfigFile"
+  fi
+
+}
+
 # DESCRIPTION: The entry point for the crc-config
 # USAGE: crc-config COMMAND
 crc-config() {
@@ -55,8 +136,17 @@ crc-config() {
   shift
 
   case $commandToExec in
+    create)
+        createConfig "$@"
+      ;;
     read)
         readConfig "$@"
+      ;;
+    edit)
+        editConfig "$@"
+      ;;
+    delete)
+        deleteConfig "$@"
       ;;
     *)
         crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-config ""$commandToExec"
