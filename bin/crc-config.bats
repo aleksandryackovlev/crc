@@ -56,6 +56,91 @@ teardown() {
   [ "$output" = vi ]
 }
 
+# editConfigFile
+@test "[crc-config] editConfigFile: should open a config file in a default editor" {
+  EDITOR=echo
+  run editConfigFile
+  expectedConfigFile="$PWD"/.crcrc
+
+  [ "$output" =  "$expectedConfigFile" ]
+}
+
+@test "[crc-config] editConfigFile: should throw an error if a local config file doesn't exist" {
+  configFileName=abracadabre
+  run editConfigFile
+  [ "$status" -eq 1 ]
+  [ "$output" =  "A local config file doesn't exist" ]
+}
+
+# editConfigFile
+@test "[crc-config] createConfigFile: should create a config file and open it in a default editor" {
+  EDITOR=cat
+  expectedConfigFile="$PWD"/.crcrc
+
+  rm "$expectedConfigFile"
+
+  [ ! -f "$expectedConfigFile" ]
+
+  run createConfigFile
+
+  [ -f "$expectedConfigFile" ]
+  [ "${lines[0]}" = 'createFileComponent=0' ]
+  [ "${lines[1]}" = 'componentType=functional' ]
+  [ "${lines[2]}" = 'fileExtention=js' ]
+  [ "${lines[3]}" = 'addCss=0' ]
+  [ "${lines[4]}" = 'template=default' ]
+}
+
+@test "[crc-config] createConfigFile: should throw an error if a local config file already exists" {
+  expectedOutput="A file ${PWD}/.crcrc already exists"
+
+  run createConfigFile
+
+  [ "$status" -eq 1 ]
+  [ "$output" =  "$expectedOutput" ]
+}
+
+@test "[crc-config] createConfigFile: should create a config file in a given directory and open it in a default editor" {
+  EDITOR=cat
+  dir="$HOME"/"$RANDOM"
+
+  mkdir "$dir"
+
+  expectedConfigFile="$dir"/.crcrc
+
+  [ ! -f "$expectedConfigFile" ]
+
+  run createConfigFile "$dir"
+
+  [ -f "$expectedConfigFile" ]
+  [ "${lines[0]}" = 'createFileComponent=0' ]
+  [ "${lines[1]}" = 'componentType=functional' ]
+  [ "${lines[2]}" = 'fileExtention=js' ]
+  [ "${lines[3]}" = 'addCss=0' ]
+  [ "${lines[4]}" = 'template=default' ]
+
+  rm -rf "$dir"
+}
+
+@test "[crc-config] createConfigFile: should throw an error if a given directory doesn't exist" {
+  expectedOutput="A directory /abracadabra doesn't exist"
+
+  run createConfigFile /abracadabra
+
+  [ "$status" -eq 1 ]
+  [ "$output" =  "$expectedOutput" ]
+}
+
+@test "[crc-config] deleteConfigFile: should delete a config file if it exists" {
+  expectedConfigFile="$PWD"/.crcrc
+
+  [ -f "$expectedConfigFile" ]
+
+  run deleteConfigFile
+
+  [ ! -f "$expectedConfigFile" ]
+}
+
 # readConfig test cases
 @test "[crc-config] readConfig: should read the variables from the global and the local config files" {
   readConfig
@@ -67,7 +152,34 @@ teardown() {
   [ "$template" = 'default' ]
 }
 
-@test "[crc-config] crc-config read: should proxy its arguments to the readConfig function" {
+# crc-config test cases
+@test "[crc-config] create: should proxy its arguments to the createConfigFile function" {
+  EDITOR=cat
+  expectedConfigFile="$PWD"/.crcrc
+
+  rm "$expectedConfigFile"
+
+  [ ! -f "$expectedConfigFile" ]
+
+  run crc-config create
+
+  [ -f "$expectedConfigFile" ]
+  [ "${lines[0]}" = 'createFileComponent=0' ]
+  [ "${lines[1]}" = 'componentType=functional' ]
+  [ "${lines[2]}" = 'fileExtention=js' ]
+  [ "${lines[3]}" = 'addCss=0' ]
+  [ "${lines[4]}" = 'template=default' ]
+}
+
+@test "[crc-config] crc-config edit: should proxy its arguments to the editConfigFile function" {
+  EDITOR=echo
+  run crc-config edit
+  expectedConfigFile="$PWD"/.crcrc
+
+  [ "$output" =  "$expectedConfigFile" ]
+}
+
+@test "[crc-config] crc-config read: should proxy its arguments to the readConfigFile function" {
   crc-config read
 
   [ "$createFileComponent" -eq 1 ]
@@ -75,6 +187,16 @@ teardown() {
   [ "$fileExtention" = js ]
   [ "$addCss" -eq 0 ]
   [ "$template" = 'default' ]
+}
+
+@test "[crc-config] crc-config delete: should proxy its arguments to the deleteConfigFile function" {
+  expectedConfigFile="$PWD"/.crcrc
+
+  [ -f "$expectedConfigFile" ]
+
+  run crc-config delete
+
+  [ ! -f "$expectedConfigFile" ]
 }
 
 @test "[crc-config] crc-config *: should exit with an error message if an unknow command was given" {

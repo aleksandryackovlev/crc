@@ -79,7 +79,7 @@ editConfigFile() {
   local localConfigFile
   local currentEditor
 
-  localConfigFile="$(getLoclaConfig)"
+  localConfigFile="$(findLocalConfig)"
   currentEditor="$(getEditor)"
 
   if [[ -z $localConfigFile ]]; then
@@ -105,7 +105,7 @@ createConfigFile() {
   localConfigFile="$directory/$(crc-env configFileName)"
 
   if [[ -f $localConfigFile ]]; then
-    crc-utils die "$(crc-env generalErrorCode)" "A file $localConfigFile alredy exists"
+    crc-utils die "$(crc-env generalErrorCode)" "A file $localConfigFile already exists"
   fi
 
   currentEditor="$(getEditor)"
@@ -120,12 +120,11 @@ createConfigFile() {
 deleteConfigFile() {
   local localConfigFile
 
-  localConfigFile="$(getLoclaConfig)"
+  localConfigFile="$(findLocalConfig)"
 
   if [[ -f $localConfigFile ]]; then
     rm "$localConfigFile"
   fi
-
 }
 
 # DESCRIPTION: The entry point for the crc-config
@@ -137,16 +136,16 @@ crc-config() {
 
   case $commandToExec in
     create)
-        createConfig "$@"
+        createConfigFile "$@"
       ;;
     read)
         readConfig "$@"
       ;;
     edit)
-        editConfig "$@"
+        editConfigFile "$@"
       ;;
     delete)
-        deleteConfig "$@"
+        deleteConfigFile "$@"
       ;;
     *)
         crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-config ""$commandToExec"
