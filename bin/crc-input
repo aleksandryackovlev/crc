@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+#: Title: crc-config - FUnctions for interaction with users
+#: Date: 2019-04-23
+#: Version: 0.1.0
+#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: Description: Defferent funcrions for taking inputs from users
+
+[[ $crcInputLoaded ]] && return
+
+source ./crc-env
+source ./crc-utils
+
+required() {
+  if [[ -z $1 ]]; then
+    echo 'The field is required'
+  fi
+}
+
+textInput() {
+  local text
+  local prompt
+  local defaultPrompt
+  local defaultValue
+  local validator
+  local validationResult
+  local invalidPrompt
+  local opts
+
+  text=
+  prompt=
+  defaultPrompt='Input: '
+  defaultValue=
+  validator=
+  clearCanvas=0
+  opts=p:d:v:c
+
+  while getopts $opts opt; do
+    case $opt in
+      p)
+        prompt="${OPTARG:-$defaultPrompt}"
+        ;;
+      d)
+        defaultValue="$OPTARG"
+        ;;
+      v)
+        validator="$OPTARG"
+        ;;
+      c)
+        clearCanvas=1
+        ;;
+      *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options is set for a text input"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ -n $defaultValue ]]; then
+    prompt="${prompt} (default = ${defaultValue})"
+  fi
+
+  if [[ $clearCanvas -eq 1 ]]; then
+    clear
+  fi
+
+  if [[ -n $prompt ]]; then
+    prompt="$prompt: "
+    read -r -p "$prompt" text
+  else 
+    read -r text
+  fi
+
+  text="${text:-$defaultValue}"
+
+  if [[ -n $validator ]]; then
+
+    validationResult=$($validator "$text" 2> /dev/null)
+
+    while [[ -n $validationResult ]]; do
+      invalidPrompt="$validationResult $prompt"
+
+      if [[ $clearCanvas -eq 1 ]]; then
+        clear
+      fi
+
+      read -r -p "$invalidPrompt" text
+
+      text="${text:-$defaultValue}"
+      validationResult=$($validator "$text")
+    done
+  fi
+
+  echo "$text"
+}
+
+selectInput() {
+  echo select
+}
+
+radioInput() {
+  echo radio
+}
+
+crc-input() {
+  local commandToExec
+  commandToExec="$1"
+  shift
+
+  case $commandToExec in
+    text)
+        textInput "$@"
+      ;;
+    select)
+        selectInput "$@"
+      ;;
+    radio)
+        radioInput "$@"
+      ;;
+    *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-input ""$commandToExec"
+      ;;
+  esac
+}
+
+crcInputLoaded=1
