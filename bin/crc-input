@@ -9,6 +9,7 @@
 
 source ./crc-env
 source ./crc-utils
+source ./crc-output
 
 required() {
   if [[ -z $1 ]]; then
@@ -95,7 +96,66 @@ textInput() {
 }
 
 selectInput() {
-  echo select
+  max=$#
+
+  input=
+  activeItem=1
+
+  while true; do
+    clear
+    hideCursor
+
+    menuNum=1
+
+    for item; do
+      description="${item#*:}"
+      color=7
+
+      if [[ $activeItem -eq "$menuNum" ]]; then
+        color=4
+      fi
+
+      printf "\e[3%dm%${#max}d: %s\n" "$color" "$menuNum" "$description" >&1
+
+      menuNum=$(( menuNum + 1))
+    done
+    printf "\e[m"
+
+    read -sn1 value
+    read -sN1 -t 0.0001 k1
+    read -sN1 -t 0.0001 k2
+    read -sN1 -t 0.0001 k3
+
+    value=${value}${k1}${k2}${k3}
+
+    case "$value" in
+      k|$'\e[A'|$'\e0A')  # cursor up: previous item
+        if [[ $activeItem -gt 1 ]]; then
+          activeItem=$(( activeItem -1 ))
+        fi
+        ;;
+
+      j|$'\e[B'|$'\e0B')  # cursor down: next item
+        if [[ $activeItem -lt $max ]]; then
+          activeItem=$(( activeItem + 1 ))
+        fi
+        ;;
+
+      $'\e[1~'|$'\e0H'|$'\e[H')  # home: first item
+        activeItem=1
+        ;;
+
+      $'\e[4~'|$'\e0F'|$'\e[F')  # end: last item
+        activeItem="$max"
+        ;;
+
+      q|'') # q, carriage return: quit
+        input="${!activeItem%%:*}"
+        showCursor
+        return
+        ;;
+    esac 
+  done
 }
 
 radioInput() {
