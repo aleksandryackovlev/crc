@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#: Title: crc-output - FUnctions for interaction with users
+#: Date: 2019-04-23
+#: Version: 0.1.0
+#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: Description: Defferent funcrions for taking inputs from users
+
+[[ $crcOutputLoaded ]] && return
+
+# Command Sequence Introducer
+esc=$'\e'
+csi="$esc["
+
+moveToPosition() {
+  printf "%s%d;%dH" "${csi}" "${1:-1}" "${2:-1}"
+}
+
+moveHome() {
+  printf "%sH" "${csi}"
+}
+
+moveUp() {
+  printf "%s%sA" "${csi}" "${1:-1}"
+}
+
+moveDown() {
+  printf "%s%sB" "${csi}" "${1:-1}"
+}
+
+moveRight() {
+  printf "%s%sC" "${csi}" "${1:-1}"
+}
+
+moveLeft() {
+  printf "%s%sD" "${csi}" "${1:-1}"
+}
+
+hideCursor() {
+  printf "%s?25l" "${csi}"
+}
+
+showCursor() {
+  printf "%s?12l%s?25h" "${csi}"
+}
+
+saveCursorPosition() {
+  printf "%ss" "${csi}"
+}
+
+restoreCursorPosition() {
+  printf "%su" "${csi}"
+}
+
+clearScreen() {
+  printf "%sJ" "${csi}"
+}
+
+clearEOL() {
+  printf "%sK" "${csi}"
+}
+
+clearBOL() {
+  printf "%s1K" "${csi}"
+}
+
+clearEOS() {
+  printf "%s0J" "${csi}"
+}
+
+clearEOS() {
+  printf "%s1J" "${csi}"
+}
+
+crcOutputLoaded=1
