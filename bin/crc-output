@@ -7,68 +7,140 @@
 
 [[ $crcOutputLoaded ]] && return
 
+source ./crc-env
+source ./crc-utils
+
 # Command Sequence Introducer
 esc=$'\e'
 csi="$esc["
 
-moveToPosition() {
-  printf "%s%d;%dH" "${csi}" "${1:-1}" "${2:-1}"
+# Colors
+black=0
+red=1
+green=2
+yellow=3
+blue=4
+magenta=5
+cyan=6
+white=7
+
+# Attributes
+bold=1
+underline=4
+reverse=7
+
+# Prefixes
+fg=3
+bg=4
+
+crc-output() {
+  local commandToExec
+  local fgColor
+  local bgColor
+  commandToExec="$1"
+  shift
+
+  case $commandToExec in
+    moveToPosition)
+      printf "%s%d;%dH" "${csi}" "${1:-1}" "${2:-1}"
+      ;;
+    moveHome)
+      printf "%sH" "${csi}"
+      ;;
+    moveUp)
+      printf "%s%sA" "${csi}" "${1:-1}"
+      ;;
+    moveDown)
+      printf "%s%sB" "${csi}" "${1:-1}"
+      ;;
+    moveRight)
+      printf "%s%sC" "${csi}" "${1:-1}"
+      ;;
+    moveLeft)
+      printf "%s%sD" "${csi}" "${1:-1}"
+      ;;
+    hideCursor)
+      printf "%s?25l" "${csi}"
+      ;;
+    showCursor)
+      printf "%s?12l%s?25h" "${csi}" "${csi}"
+      ;;
+    saveCursorPosition)
+      printf "%ss" "${csi}"
+      ;;
+    restoreCursorPosition)
+      printf "%su" "${csi}"
+      ;;
+    clearScreen)
+      printf "%sJ" "${csi}"
+      ;;
+    clearEOL)
+      printf "%sK" "${csi}"
+      ;;
+    clearBOL)
+      printf "%s1K" "${csi}"
+      ;;
+    clearEOS)
+      printf "%s0J" "${csi}"
+      ;;
+    clearEOS)
+      printf "%s1J" "${csi}"
+      ;;
+    setFg)
+      case $1 in
+        black|red|green|yellow|blue|magenta|cyan|white)
+          fgColor="${!1}"
+          printf "%s%d%dm" "${csi}" "$fg" "$fgColor"
+          ;;
+      esac
+
+      ;;
+    setBg)
+      case $1 in
+        black|red|green|yellow|blue|magenta|cyan|white)
+          bgColor="${!1}"
+          printf "%s%d%dm" "${csi}" "$bg" "$bgColor"
+          ;;
+      esac
+
+      ;;
+    setFgBg)
+      fgColor=
+      bgColor=
+
+      case $1 in
+        black|red|green|yellow|blue|magenta|cyan|white)
+          fgColor="${!1}"
+          ;;
+      esac
+
+      case $2 in
+        black|red|green|yellow|blue|magenta|cyan|white)
+          bgColor="${!2}"
+          ;;
+      esac
+
+      if [[ -n $fgColor || -n $bgColor ]]; then
+        printf "%s%d%d;%d%dm" "${csi}" "$fg" "$fgColor" "$bg" "$bgColor"
+      fi
+      ;;
+    setBold)
+        printf "%s%dm" "${csi}" "$bold"
+      ;;
+    setUnderline)
+        printf "%s%dm" "${csi}" "$underline"
+      ;;
+    setReverse)
+        printf "%s%dm" "${csi}" "$reverse"
+      ;;
+    clearFormat)
+        printf "%sm" "${csi}"
+      ;;
+    *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-output ""$commandToExec"
+      ;;
+  esac
 }
 
-moveHome() {
-  printf "%sH" "${csi}"
-}
-
-moveUp() {
-  printf "%s%sA" "${csi}" "${1:-1}"
-}
-
-moveDown() {
-  printf "%s%sB" "${csi}" "${1:-1}"
-}
-
-moveRight() {
-  printf "%s%sC" "${csi}" "${1:-1}"
-}
-
-moveLeft() {
-  printf "%s%sD" "${csi}" "${1:-1}"
-}
-
-hideCursor() {
-  printf "%s?25l" "${csi}"
-}
-
-showCursor() {
-  printf "%s?12l%s?25h" "${csi}"
-}
-
-saveCursorPosition() {
-  printf "%ss" "${csi}"
-}
-
-restoreCursorPosition() {
-  printf "%su" "${csi}"
-}
-
-clearScreen() {
-  printf "%sJ" "${csi}"
-}
-
-clearEOL() {
-  printf "%sK" "${csi}"
-}
-
-clearBOL() {
-  printf "%s1K" "${csi}"
-}
-
-clearEOS() {
-  printf "%s0J" "${csi}"
-}
-
-clearEOS() {
-  printf "%s1J" "${csi}"
-}
 
 crcOutputLoaded=1
