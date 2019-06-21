@@ -4,3 +4,7 @@
 #: Version: 0.1.0
 #: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: Description: Functions for templates editing
+
+[[ $crcTemplateLoaded ]] && return
+
+crcTemplateLoaded=1
