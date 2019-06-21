@@ -79,7 +79,7 @@ textInput() {
     validationResult=$($validator "$text" 2> /dev/null)
 
     while [[ -n $validationResult ]]; do
-      invalidPrompt="$validationResult $prompt"
+      invalidPrompt="$(crc-output setFg red)$validationResult $(crc-output clearFormat)$prompt"
 
       if [[ $clearCanvas -eq 1 ]]; then
         clear
@@ -96,37 +96,79 @@ textInput() {
 }
 
 selectInput() {
-  max=$#
+  local max
+  local activeItem
+  local menuNum
+  local description
+  local value
+  local k1
+  local k2
+  local k3
+  local opts
+  local defaultPrompt
+  local prompt
 
+  max=$#
   input=
+  prompt=
   activeItem=1
+  defaultPrompt='Select: '
+  clearCanvas=1
+  opts=p:C
+
+  while getopts $opts opt; do
+    case $opt in
+      p)
+        prompt="${OPTARG:-$defaultPrompt}"
+        ;;
+      C)
+        clearCanvas=0
+        ;;
+      *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options is set for a select input"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
 
   while true; do
-    clear
-    hideCursor
+    if [[ $clearCanvas -eq 1 ]]; then
+      clear
+    fi
+
+    crc-output setBold
+    printf "%s\n" "$prompt"
+    crc-output clearFormat
+    crc-output hideCursor
 
     menuNum=1
 
     for item; do
       description="${item#*:}"
-      color=7
 
       if [[ $activeItem -eq "$menuNum" ]]; then
-        color=4
+        crc-output setFg green
+      else
+        crc-output clearFormat
       fi
 
-      printf "\e[3%dm%${#max}d: %s\n" "$color" "$menuNum" "$description" >&1
+      printf "%${#max}d: %s\n" "$menuNum" "$description" >&1
 
       menuNum=$(( menuNum + 1))
     done
-    printf "\e[m"
+
+    crc-output clearFormat
 
     read -sn1 value
-    read -sN1 -t 0.0001 k1
-    read -sN1 -t 0.0001 k2
-    read -sN1 -t 0.0001 k3
 
-    value=${value}${k1}${k2}${k3}
+    if [[ $value = $'\e' ]]; then
+      read -sN1 -t 0.0001 k1
+      read -sN1 -t 0.0001 k2
+      read -sN1 -t 0.0001 k3
+
+      value=${value}${k1}${k2}${k3}
+    fi
 
     case "$value" in
       k|$'\e[A'|$'\e0A')  # cursor up: previous item
@@ -151,7 +193,7 @@ selectInput() {
 
       q|'') # q, carriage return: quit
         input="${!activeItem%%:*}"
-        showCursor
+        crc-output showCursor
         return
         ;;
     esac 
