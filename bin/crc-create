@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-#: Title: crc-create - Create React Component
-#: Date: 2019-04-23
-#: Version: 0.1.0
-#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
-#: Description: Creates React Component
-#: Options: -c - type of a component f/c, default to f
+
+#: TITLE: crc-create
+#: DATE: 2019-04-23
+#: VERSION: 0.1.0
+#: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: DESCRIPTION: Creates React Components
+#: OPTIONS: -c - type of a component f/c, default to f
 #:          -e - the extention of a main file, default to js
 #:          -f - create only a file
 #:          -s - add css file

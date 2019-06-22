@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-#: Title: crc-config - FUnctions for interaction with users
-#: Date: 2019-04-23
-#: Version: 0.1.0
-#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
-#: Description: Defferent funcrions for taking inputs from users
+
+#: TITLE: crc-input
+#: DATE: 2019-04-23
+#: VERSION: 0.1.0
+#: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: DESCRIPTION: Functions for getting users' input
 
 [[ $crcInputLoaded ]] && return
 
@@ -17,6 +18,12 @@ required() {
   fi
 }
 
+# DESCRIPTION: Shows a text prompt to a user
+# USAGE: textInput [OPTIONS]
+# OPTIONS: -p prompt - text for a prompt, default to "Input: "
+#          -d value - default value
+#          -v validator - a function or to validate an input
+#          -c - clear canvas on show, defalut to false
 textInput() {
   local text
   local prompt
@@ -95,6 +102,10 @@ textInput() {
   echo "$text"
 }
 
+# DESCRIPTION: Shows a select menu
+# USAGE: selectInput [OPTIONS]
+# OPTIONS: -p prompt - text for a prompt, default to "Select: "
+#          -C - clear canvas on show, defalut to true
 selectInput() {
   local max
   local activeItem
@@ -192,6 +203,7 @@ selectInput() {
         ;;
 
       q|'') # q, carriage return: quit
+        # TODO: Is there any other way to get the value from a subshell?
         input="${!activeItem%%:*}"
         crc-output showCursor
         return
@@ -200,10 +212,16 @@ selectInput() {
   done
 }
 
+# DESCRIPTION: Shows a radio menu
+# USAGE: radioInput [OPTIONS]
+# OPTIONS: -p prompt - text for a prompt, default to "Select (y/n): "
+#          -c - clear canvas on show, defalut to false
 radioInput() {
   echo radio
 }
 
+# DESCRIPTION: The entry point for the input functions
+# USAGE: crc-input [COMMAND] [ARGUMENTS]
 crc-input() {
   local commandToExec
   commandToExec="$1"

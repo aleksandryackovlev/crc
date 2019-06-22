@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-#: Title: crc-template - Functions for templates editing
-#: Date: 2019-04-23
-#: Version: 0.1.0
-#: Author: "Alex Y" <aleksandryackovlev@yandex.ru>
-#: Description: Functions for templates editing
+
+#: TITLE: crc-template
+#: DATE: 2019-04-23
+#: VERSION: 0.1.0
+#: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
+#: DESCRIPTION: Functions for templates' manipulations
 
 [[ $crcTemplateLoaded ]] && return
 
