@@ -36,7 +36,7 @@ textInput() {
 
   text=
   prompt=
-  defaultPrompt='Input: '
+  defaultPrompt='Input'
   defaultValue=
   validator=
   clearCanvas=0
@@ -217,8 +217,77 @@ selectInput() {
 # OPTIONS: -p prompt - text for a prompt, default to "Select (y/n): "
 #          -c - clear canvas on show, defalut to false
 radioInput() {
-  echo radio
+  local text
+  local prompt
+  local defaultPrompt
+  local invalidPrompt
+  local opts
+
+  text=
+  prompt=
+  defaultPrompt='Select'
+  clearCanvas=0
+  opts=p:c
+
+  while getopts $opts opt; do
+    case $opt in
+      p)
+        prompt="${OPTARG:-$defaultPrompt}"
+        ;;
+      c)
+        clearCanvas=1
+        ;;
+      *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options is set for a radio input"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $clearCanvas -eq 1 ]]; then
+    clear
+  fi
+
+  if [[ -n $prompt ]]; then
+    prompt="$prompt (y/n): "
+    read -r -sn1 -p "$prompt" text
+  else 
+    read -r -sn1 text
+  fi
+
+  validationResult=
+  case $text in
+    y|Y|n|N)
+      ;;
+    *)
+      validationResult="Invalid value"
+      ;;
+  esac
+
+  while [[ -n $validationResult ]]; do
+    invalidPrompt="$(crc-output setFg red)$validationResult $(crc-output clearFormat)$prompt"
+
+    if [[ $clearCanvas -eq 1 ]]; then
+      clear
+    fi
+
+    read -r -sn1 -p "$invalidPrompt" text
+
+    validationResult=
+    case $text in
+      y|Y|n|N)
+        ;;
+      *)
+        validationResult="Invalid value"
+        ;;
+    esac
+  done
+
+  echo "$text"
 }
+
+radioInput -c -p "Agree"
 
 # DESCRIPTION: The entry point for the input functions
 # USAGE: crc-input [COMMAND] [ARGUMENTS]
