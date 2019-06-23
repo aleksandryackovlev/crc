@@ -31,6 +31,7 @@ crc-create() {
 
   ## Options
   opts=c:t:se:fqm
+  OPTIND=1
 
   while getopts $opts opt; do
     case $opt in

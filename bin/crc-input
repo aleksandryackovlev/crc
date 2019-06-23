@@ -11,12 +11,7 @@
 source ./crc-env
 source ./crc-utils
 source ./crc-output
-
-required() {
-  if [[ -z $1 ]]; then
-    echo 'The field is required'
-  fi
-}
+source ./crc-validate
 
 # DESCRIPTION: Shows a text prompt to a user
 # USAGE: textInput [OPTIONS]
@@ -41,6 +36,7 @@ textInput() {
   validator=
   clearCanvas=0
   opts=p:d:v:c
+  OPTIND=1
 
   while getopts $opts opt; do
     case $opt in
@@ -83,7 +79,7 @@ textInput() {
 
   if [[ -n $validator ]]; then
 
-    validationResult=$($validator "$text" 2> /dev/null)
+    validationResult=$(crc-validate "$validator" "$text" 2> /dev/null)
 
     while [[ -n $validationResult ]]; do
       invalidPrompt="$(crc-output setFg red)$validationResult $(crc-output clearFormat)$prompt"
@@ -95,7 +91,7 @@ textInput() {
       read -r -p "$invalidPrompt" text
 
       text="${text:-$defaultValue}"
-      validationResult=$($validator "$text")
+      validationResult=$(crc-validate "$validator" "$text")
     done
   fi
 
@@ -126,6 +122,7 @@ selectInput() {
   defaultPrompt='Select: '
   clearCanvas=1
   opts=p:C
+  OPTIND=1
 
   while getopts $opts opt; do
     case $opt in
@@ -228,6 +225,7 @@ radioInput() {
   defaultPrompt='Select'
   clearCanvas=0
   opts=p:c
+  OPTIND=1
 
   while getopts $opts opt; do
     case $opt in
@@ -256,14 +254,7 @@ radioInput() {
     read -r -sn1 text
   fi
 
-  validationResult=
-  case $text in
-    y|Y|n|N)
-      ;;
-    *)
-      validationResult="Invalid value"
-      ;;
-  esac
+  validationResult=$(crc-validate yesOrNo -- "$text")
 
   while [[ -n $validationResult ]]; do
     invalidPrompt="$(crc-output setFg red)$validationResult $(crc-output clearFormat)$prompt"
@@ -274,20 +265,11 @@ radioInput() {
 
     read -r -sn1 -p "$invalidPrompt" text
 
-    validationResult=
-    case $text in
-      y|Y|n|N)
-        ;;
-      *)
-        validationResult="Invalid value"
-        ;;
-    esac
+    validationResult=$(crc-validate yesOrNo -- "$text")
   done
 
   echo "$text"
 }
-
-radioInput -c -p "Agree"
 
 # DESCRIPTION: The entry point for the input functions
 # USAGE: crc-input [COMMAND] [ARGUMENTS]
