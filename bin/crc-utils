@@ -9,6 +9,7 @@
 [[ $crcUtilsLoaded ]] && return
 
 source ./crc-env
+source ./crc-output
 source ./crc-validate
 
 # DESCRIPTION: Print an error message and exit with the given status code
@@ -23,7 +24,9 @@ die() {
   fi
 
   if [[ -n $2 ]]; then
+    crc-output setFg red
     printf "%s\n" "$2" >&2
+    crc-output clearFormat
   fi
 
   exit "$error"
