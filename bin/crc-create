@@ -5,11 +5,10 @@
 #: VERSION: 0.1.0
 #: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: DESCRIPTION: Creates React Components
-#: OPTIONS: -c - type of a component f/c, default to f
+#: OPTIONS: -t - template name, default to default
+#:          -s - add css file
 #:          -e - the extention of a main file, default to js
 #:          -f - create only a file
-#:          -s - add css file
-#:          -t - template name, default to default
 
 [[ $crcCreateLoaded ]] && return
 
@@ -30,20 +29,11 @@ crc-create() {
   templateDir="$(crc-env templateDirectory)/$template"
 
   ## Options
-  opts=c:t:se:fqm
+  opts=c:t:se:f
   OPTIND=1
 
   while getopts $opts opt; do
     case $opt in
-      c)
-        if [[ $OPTARG = f ]]; then
-          componentType=functional
-        elif [[ $OPTARG = c ]]; then
-          componentType=classical
-        else
-          crc-utils die "$(crc-env misuseErrorCode)" "An unknown component type is given"
-        fi
-        ;;
       t)
         template="$OPTARG"
         templateDir="$(crc-env templateDirectory)/$template"
