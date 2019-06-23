@@ -2,20 +2,6 @@
 source ./crc-utils
 
 
-# isNumber test cases
-@test "[crc-utils] isNumber: should return true for numbers" {
-  run isNumber 4
-
-  [ "$status" = 0 ]
-}
-
-@test "[crc-utils] isNumber: should return false for not numbers" {
-  run isNumber someVal
-
-  [ "$status" = 1 ]
-}
-
-
 # die test cases
 @test "[crc-utils] die: should exit with a given error code" {
   run die 126
@@ -43,12 +29,6 @@ source ./crc-utils
 
 
 # crc-utils test cases
-@test "[crc-utils] crc-utils isNumber: should proxy its arguments to the isNumber function" {
-  run crc-utils isNumber 3
-
-  [ "$status" -eq 0 ]
-}
-
 @test "[crc-utils] crc-utils die: should proxy its arguments to the die function" {
   run crc-utils die 3 'Something wrong has happend'
 

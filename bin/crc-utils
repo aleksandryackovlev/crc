@@ -9,19 +9,7 @@
 [[ $crcUtilsLoaded ]] && return
 
 source ./crc-env
-
-# DESCRIPTION: Checks if a argument is a number
-# USAGE: isNumber ARGUMENT
-isNumber() {
-  case $1 in
-    *[!0-9]*)
-      false
-    ;;
-    *)
-      true
-    ;;
-  esac
-}
+source ./crc-validate
 
 # DESCRIPTION: Print an error message and exit with the given status code
 # USAGE: die STATUS [MESSAGE]
@@ -30,7 +18,7 @@ die() {
 
   error="$1"
 
-  if ! isNumber "$error"; then
+  if [[ -n "$(crc-validate number "$error")" ]]; then
     error="$(crc-env generalErrorCode)"
   fi
 
@@ -51,9 +39,6 @@ crc-utils() {
   case $commandToExec in
     die)
         die "$@"
-      ;;
-    isNumber)
-        isNumber "$1"
       ;;
     *)
         die "$(crc-env misuseErrorCode)" "An unknown command crc-utils ""$commandToExec"
