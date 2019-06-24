@@ -1,7 +1,5 @@
-# crc - Create React Component
+# CRC - Create React Component
 An easy to use cli-tool for creation React components
-
-##Commands
 
 ### crc create
 Creates a new React component
