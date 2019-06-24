@@ -9,7 +9,6 @@
 [[ $crcOutputLoaded ]] && return
 
 source ./crc-env
-source ./crc-utils
 
 # Command Sequence Introducer
 esc=$'\e'
@@ -140,7 +139,10 @@ crc-output() {
         printf "%sm" "${csi}"
       ;;
     *)
-        crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-output ""$commandToExec"
+        printf "%s%d%dm" "${csi}" "$fg" "$red"
+        printf "An unknown command crc-output %s\n" "$commandToExec" >&2
+        printf "%sm" "${csi}"
+        exit "$(crc-env misuseErrorCode)"
       ;;
   esac
 }

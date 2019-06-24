@@ -44,5 +44,7 @@ source ./crc-help
   run crc-help something 3 'Something wrong has happend'
 
   [ "$status" -eq 2 ]
-  [ "$output" = 'An unknown command crc-help something' ]
+
+  value="${csi}31mAn unknown command crc-help something"$'\n'"${csi}m"
+  [ "$output" = "$value" ]
 }

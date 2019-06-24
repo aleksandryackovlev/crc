@@ -69,7 +69,9 @@ teardown() {
   configFileName=abracadabre
   run editConfigFile
   [ "$status" -eq 1 ]
-  [ "$output" =  "A local config file doesn't exist" ]
+
+  value="${csi}31mA local config file doesn't exist"$'\n'"${csi}m"
+  [ "$output" = "$value" ]
 }
 
 # editConfigFile
@@ -92,7 +94,7 @@ teardown() {
 }
 
 @test "[crc-config] createConfigFile: should throw an error if a local config file already exists" {
-  expectedOutput="A file ${PWD}/.crcrc already exists"
+  expectedOutput="${csi}31mA file ${PWD}/.crcrc already exists"$'\n'"${csi}m"
 
   run createConfigFile
 
@@ -123,7 +125,7 @@ teardown() {
 }
 
 @test "[crc-config] createConfigFile: should throw an error if a given directory doesn't exist" {
-  expectedOutput="A directory /abracadabra doesn't exist"
+  expectedOutput="${csi}31mA directory /abracadabra doesn't exist"$'\n'"${csi}m"
 
   run createConfigFile /abracadabra
 
@@ -203,5 +205,6 @@ teardown() {
   run crc-config something
 
   [ "$status" -eq 2 ]
-  [ "$output" = 'An unknown command crc-config something' ]
+  value="${csi}31mAn unknown command crc-config something"$'\n'"${csi}m"
+  [ "$output" = "$value" ]
 }

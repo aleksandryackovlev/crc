@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 source ./crc-utils
 
+esc=$'\e'
+csi="$esc["
 
 # die test cases
 @test "[crc-utils] die: should exit with a given error code" {
@@ -18,7 +20,9 @@ source ./crc-utils
 @test "[crc-utils] die: should print a given text description if it is set" {
   run die 2 "something happend"
 
-  [ "$output" = 'something happend' ]
+  value="${csi}31msomething happend"$'\n'"${csi}m"
+
+  [ "$output" = "$value" ]
 }
 
 @test "[crc-utils] die: should not print any if it is not set" {
@@ -32,13 +36,17 @@ source ./crc-utils
 @test "[crc-utils] crc-utils die: should proxy its arguments to the die function" {
   run crc-utils die 3 'Something wrong has happend'
 
+  value="${csi}31mSomething wrong has happend"$'\n'"${csi}m"
+
   [ "$status" -eq 3 ]
-  [ "$output" = 'Something wrong has happend' ]
+  [ "$output" = "$value" ]
 }
 
 @test "[crc-utils] crc-utils *: should exit with an error message if an unknow command was given" {
   run crc-utils something 3 'Something wrong has happend'
 
+  value="${csi}31mAn unknown command crc-utils something"$'\n'"${csi}m"
+
   [ "$status" -eq 2 ]
-  [ "$output" = 'An unknown command crc-utils something' ]
+  [ "$output" = "$value" ]
 }
