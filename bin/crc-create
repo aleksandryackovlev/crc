@@ -7,8 +7,12 @@
 #: DESCRIPTION: Creates React Components
 #: OPTIONS: -t - template name, default to default
 #:          -s - add css file
-#:          -e - the extention of a main file, default to js
 #:          -f - create only a file
+#:          -l - lifecycle methods
+#:          -h - handlers
+#:          -m - methods
+#:          -i - interactive mode
+
 
 [[ $crcCreateLoaded ]] && return
 

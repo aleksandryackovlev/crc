@@ -12,6 +12,7 @@ crc create -t some-template -s SomeComponent # create a directory with a compone
 crc create -t some-template SomeComponent "somePropName:PropType:defalutValue" "somePropName:PropType:defalutValue" # create a directory with a component from the some-template with props
 crc create -l "componentDidMount:componentWillUnmount" SomeComponent # create a component with given lifecycles
 crc create -h "handleChange:handleClick" SomeComponent # create a component with given handlers
+crc create -m "handleChange:handleClick" SomeComponent # create a component with given handlers
 crc create -i SomeComponent # create component interactively
 ```
 
