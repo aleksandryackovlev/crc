@@ -192,6 +192,4 @@ crc-help() {
   esac
 }
 
-crc-help create
-
 crcHelpLoaded=1
