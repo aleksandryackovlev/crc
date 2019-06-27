@@ -15,7 +15,142 @@ source ./crc-utils
 # USAGE: usage
 showUsageInfo() {
   printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
-  printf "USAGE: %s\n" "$(crc-env usage)"
+  cat <<- HELP
+USAGE: "$(crc-env usage)"
+
+These are command used in various situations:
+
+    create        Create a React component
+    template      Create, read, update or delete a template
+    config        Create or delete a local crc config for a directory
+
+See 'crc help <command>' to read about a specific subcommand.
+HELP
+}
+
+# DESCRIPTION: Print the usage information
+# USAGE: usage
+showCreateHelp() {
+  printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
+  cat <<- HELP
+
+NAME
+        crc-create - Ceate React components
+
+SYNOPSIS
+        crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>]
+                [ -l <LIFECYCLE_METHODS>] [-h <HANDLERS>] [-m <METHODS>]
+                <COMPONENT_NAME> [<PROPS>]
+        crc create -i
+
+DESCRIPTION
+        If a place for an option is not defined in a template, it
+        will not appear in the resulting file even if it is set
+        in the command.
+
+        If -f (create a one-file component) and -s (add styles) are given,
+        the -s option will be ignored.
+
+        If -i (interactive) is given, other parameters except
+        <COMPONENT_NAME> will be ignored.
+
+OPTIONS
+        -f
+            Create a file component.
+
+        -s
+            Add a styles to the component.
+
+        -t <TEMPLATE>
+            Create a component from the template with the name <TEMPLATE>.
+            By default it is set to a "default" template.
+
+        -d <DIRECTORY>
+            Create component in a <DIRECTORY>.
+            By default it is set to the current working directory.
+
+        -l <LIFECYCLE_METHODS>
+            Add a given list of lifecycle methods.
+            Methods should be given as a string that consits of method names
+            separated by colons.
+
+        -h <HANDLERS>
+            Add a given list of arrow functions.
+            Handlers should be given as a string that consits of their names
+            separated by colons.
+
+        -m <METHODS>
+            Add a given list of methods.
+            Handlers should be given as a string that consits of their names
+            separated by colons.
+
+        -i
+            Create a component interactively.
+            If this option is given, all other parameters except <COMPONENT_NAME>
+            will be ignored.
+
+        <COMPONENT_NAME>
+            The name of a component that should be created written in camelcase.
+
+        <PROPS>
+            A list of props that should be added to a component.
+            Every props should be written a separate parameter and should consist
+            of a name, propType and defaultProp separated by colons.
+            If a defaultProp is not given the prop is considered as a required one.
+
+EXAMPLES
+          Create a directory with a SomeComponent component from the default template:
+
+              $ crc create SomeComponent
+
+
+          Create a directory with a SomeComponent component from the "some-template" template:
+
+              $ crc create -t some-template SomeComponent
+
+
+          Create a file component from the "some-template" template:
+
+              $ crc create -t some-template -f SomeComponent
+
+
+          Create a directory with a SomeComponent component from the "some-template" template
+          adding styles:
+
+              $ crc create -t some-template -s SomeComponent
+
+
+          Create a directory with a SomeComponent component from the "default" template
+          adding a given list of props:
+
+              $ crc create SomeComponent "somePropName:PropType:defalutValue"
+
+
+          Create a directory with a SomeComponent component from the "default" template
+          adding a given list of lifecycle methods:
+
+              $ crc create -l "componentDidMount:componentWillUnmount" SomeComponent
+
+
+          Create a directory with a SomeComponent component from the "default" template
+          adding a given list of handlers:
+
+              $ crc create -h "handleChange:handleClick" SomeComponent
+
+
+          Create a SomeComponent component with a given list of handlers:
+
+              $ crc create -m "handleChange:handleClick" SomeComponent
+
+
+          Create a SomeComponent component interactively:
+
+              $ crc create -i SomeComponent
+
+SEE ALSO
+        crc-template, crc-config
+
+HELP
 }
 
 # DESCRIPTION: Print the version information
@@ -38,9 +173,14 @@ crc-help() {
   fi
 
   case $commandToExec in
-    usage)
-        showUsageInfo
-        die "$(crc-env successCode)"
+    create)
+        showCreateHelp | less
+      ;;
+    template)
+        echo 'template'
+      ;;
+    config)
+        echo 'config'
       ;;
     version)
         showVersionInfo
@@ -51,5 +191,7 @@ crc-help() {
       ;;
   esac
 }
+
+crc-help create
 
 crcHelpLoaded=1

@@ -13,7 +13,7 @@ export scriptName=crc
 export version=0.1.0
 export author="Alex Y"
 export description="Create a react component"
-export usage="$scriptName [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME"
+export usage="$scriptName <COMMAND> [<ARGUMENTS>] [<COMPONENT_NAME>]"
 
 ## Exit codes
 export successCode=0
