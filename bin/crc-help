@@ -22,14 +22,14 @@ These are command used in various situations:
 
     create        Create a React component
     template      Create, read, update or delete a template
-    config        Create or delete a local crc config for a directory
+    config        Create, edit or delete a local crc config for a directory
 
-See 'crc help <command>' to read about a specific subcommand.
+See 'crc help <COMMAND>' to read about a specific subcommand.
 HELP
 }
 
-# DESCRIPTION: Print the usage information
-# USAGE: usage
+# DESCRIPTION: Print the help information on the crc-create command
+# USAGE: showCreateHelp
 showCreateHelp() {
   printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
   cat <<- HELP
@@ -177,14 +177,13 @@ crc-help() {
         showCreateHelp | less
       ;;
     template)
-        echo 'template'
+        echo 'template help info'
       ;;
     config)
-        echo 'config'
+        echo 'config help info'
       ;;
     version)
         showVersionInfo
-        die "$(crc-env successCode)"
       ;;
     *)
         die "$(crc-env misuseErrorCode)" "An unknown command crc-help ""$commandToExec"
