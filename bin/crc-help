@@ -38,21 +38,18 @@ NAME
         crc-create - Ceate React components
 
 SYNOPSIS
-        crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>]
-                [ -l <LIFECYCLE_METHODS>] [-h <HANDLERS>] [-m <METHODS>]
-                <COMPONENT_NAME> [<PROPS>]
+        crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>] [ -l <LIFECYCLE_METHODS>]
+                [-h <HANDLERS>] [-m <METHODS>] <COMPONENT_NAME> [<PROPS>]
         crc create -i
 
 DESCRIPTION
-        If a place for an option is not defined in a template, it
-        will not appear in the resulting file even if it is set
-        in the command.
+        If a place for an option is not defined in a template, it will not appear in the resulting
+        file even if it is set in the command.
 
-        If -f (create a one-file component) and -s (add styles) are given,
-        the -s option will be ignored.
+        If -f (create a one-file component) and -s (add styles) are given, the -s option will be
+        ignored.
 
-        If -i (interactive) is given, other parameters except
-        <COMPONENT_NAME> will be ignored.
+        If -i (interactive) is given, other parameters except <COMPONENT_NAME> will be ignored.
 
 OPTIONS
         -f
@@ -71,31 +68,27 @@ OPTIONS
 
         -l <LIFECYCLE_METHODS>
             Add a given list of lifecycle methods.
-            Methods should be given as a string that consits of method names
-            separated by colons.
+            Methods should be given as a string that consits of method names separated by colons.
 
         -h <HANDLERS>
             Add a given list of arrow functions.
-            Handlers should be given as a string that consits of their names
-            separated by colons.
+            Handlers should be given as a string that consits of their names separated by colons.
 
         -m <METHODS>
             Add a given list of methods.
-            Handlers should be given as a string that consits of their names
-            separated by colons.
+            Handlers should be given as a string that consits of their names separated by colons.
 
         -i
             Create a component interactively.
-            If this option is given, all other parameters except <COMPONENT_NAME>
-            will be ignored.
+            If this option is given, all other parameters except <COMPONENT_NAME> will be ignored.
 
         <COMPONENT_NAME>
             The name of a component that should be created written in camelcase.
 
         <PROPS>
             A list of props that should be added to a component.
-            Every props should be written a separate parameter and should consist
-            of a name, propType and defaultProp separated by colons.
+            Every props should be written a separate parameter and should consist of a name,
+            propType and defaultProp separated by colons.
             If a defaultProp is not given the prop is considered as a required one.
 
 EXAMPLES
@@ -120,20 +113,20 @@ EXAMPLES
               $ crc create -t some-template -s SomeComponent
 
 
-          Create a directory with a SomeComponent component from the "default" template
-          adding a given list of props:
+          Create a directory with a SomeComponent component from the "default" template adding a
+          given list of props:
 
               $ crc create SomeComponent "somePropName:PropType:defalutValue"
 
 
-          Create a directory with a SomeComponent component from the "default" template
-          adding a given list of lifecycle methods:
+          Create a directory with a SomeComponent component from the "default" template adding a
+          given list of lifecycle methods:
 
               $ crc create -l "componentDidMount:componentWillUnmount" SomeComponent
 
 
-          Create a directory with a SomeComponent component from the "default" template
-          adding a given list of handlers:
+          Create a directory with a SomeComponent component from the "default" template adding a
+          given list of handlers:
 
               $ crc create -h "handleChange:handleClick" SomeComponent
 
