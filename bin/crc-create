@@ -4,36 +4,165 @@
 #: DATE: 2019-04-23
 #: VERSION: 0.1.0
 #: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
-#: DESCRIPTION: Creates React Components
-#: OPTIONS: -t - template name, default to default
-#:          -s - add css file
-#:          -f - create only a file
-#:          -l - lifecycle methods
-#:          -h - handlers
-#:          -m - methods
-#:          -i - interactive mode
-
+#: DESCRIPTION: Creates React Component
+#: OPTIONS: -t <TEMPLATE> - template name, default to "default"
+#:          -f - create a file component
+#:          -s - add styles to the component
+#:          -d <DIRECTORY> - create component in a <DIRECTORY>, default to PWD
+#:          -l <LIFECYCLE_METHODS> - add a given list of lifecycle methods
+#:          -h <HANDLERS> - add a given list of arrow functions
+#:          -m <METHODS> - add a given list of methods
+#:          -i - create a component interactively
 
 [[ $crcCreateLoaded ]] && return
 
 source ./crc-env
 source ./crc-config
 source ./crc-utils
+source ./crc-input
+
+addStylesOutput() {
+  local sedCommands
+
+  if [[ "${1:-0}" -eq 1 ]]; then 
+    sedCommands="s/%CSS_IMPORT%/import '.\/index.css';/g"
+  else
+    sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
+  fi
+
+  echo "$sedCommands"
+}
+
+getStylesFileExtention() {
+  if [[ -f "$templateDir"/styles.css ]]; then
+    echo css
+  elif [[ -f "$templateDir"/styles.scss ]]; then
+    echo scss
+  elif [[ -f "$templateDir"/styles.less ]]; then
+    echo less
+  elif [[ -f "$templateDir"/styles.styl ]]; then
+    echo styl
+  else
+    crc-utils die "$(crc-env cannotExecuteErrorCode)" "The style template file doesn't exist"
+  fi
+}
+
+createStylesFile() {
+  local addStyles
+  local componentName
+  local stylesTemplate
+
+  addStyles="$1"
+  stylesTemplate="$2"
+  componentName="$3"
+  stylesFile="$4"
+
+  if [[ $addStyles -eq 0 ]]; then
+    return 0
+  fi
+
+  if [[ ! -f $stylesTemplate ]]; then
+    crc-utils die "$(crc-env cannotExecuteErrorCode)" "The css template file doesn't exist"
+  fi
+
+  sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$stylesFile"
+}
+
+replaceComponentName() {
+  echo "s/%COMPONENT_NAME%/$1/g"
+}
+
+createComponentFile() {
+  local sedCommands
+  local componentTemplate
+  local componentFile
+  local replaceFile
+
+  sedCommands="$1"
+  componentTemplate="$2"
+  componentFile="$3"
+  replaceFile=
+
+  if [[ -f "$componentFile" ]]; then
+    replaceFile="$(crc-input radio -p "The file already exists. Continue?")"
+
+    case $replaceFile in
+      [!yY])
+        crc-utils die "$(crc-env successCode)" "Stop executing the script"
+        ;;
+    esac
+
+    rm -f "$componentFile" || die "$(crc-env cannotExecuteErrorCode)" "The file can't be deleted"
+  fi
+
+  sed "$sedCommands" "$componentTemplate" > "$componentFile"
+}
+
+createComponentDirectory() {
+  local componentName
+  componentName="$1"
+
+  if [[ -d "$componentName" ]]; then
+    replaceDirectory="$(crc-input radio -p "The directory already exists. Continue?")"
+
+    case $replaceDirectory in
+      [!yY])
+        crc-utils die "$(crc-env generalErrorCode)" "Stop executing the script"
+        ;;
+    esac
+
+    rm -rf "$componentName" || crc-utils die "$(crc-env cannotExecuteErrorCode)" "The directory can't be deleted"
+  fi
+
+  mkdir "$componentName" || crc-utils die "$(crc-env cannotExecuteErrorCode)" "The directory can't be created"
+}
+
+getComponentFileExtention() {
+  if [[ -f "$templateDir"/component.js ]]; then
+    echo js
+  elif [[ -f "$templateDir"/component.jsx ]]; then
+    echo jsx
+  elif [[ -f "$templateDir"/component.ts ]]; then
+    echo ts
+  else
+    crc-utils die "$(crc-env generalErrorCode)" "The component's template file doesn't exist"
+  fi
+}
+
+addLifecycleMethods() {
+  echo '/%LIFECYCLE_METHODS%/d'
+}
+
+addHandlers() {
+  echo '/%HANDLERS%/d'
+}
+
+addMethods() {
+  echo '/%METHODS%/d'
+}
+
+addProps() {
+  echo '/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
+}
 
 crc-create() {
   crc-config read
 
   ## Initialize defaults
   componentName=
-  createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
-  componentType="${componentType:-$defaultComponentType}"
-  fileExtention="${fileExtention:-$defaultFileExtention}"
-  addCss="${addCss:-$defaultAddCss}"
   template="${template:-$defaultTemplate}"
+  createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
+  addCss="${addCss:-$defaultAddCss}"
+  directory="$PWD"
+  lifecycleMethods=
+  handlers=
+  methods=
+  interactive=0
+
   templateDir="$(crc-env templateDirectory)/$template"
 
   ## Options
-  opts=c:t:se:f
+  opts=t:fsd:l:h:m:i
   OPTIND=1
 
   while getopts $opts opt; do
@@ -41,28 +170,27 @@ crc-create() {
       t)
         template="$OPTARG"
         templateDir="$(crc-env templateDirectory)/$template"
-
-        if [[ ! -d $templateDir ]]; then
-          crc-utils die "$(crc-env misuseErrorCode)" "The template directory doesn't exist"
-        fi
-        ;;
-      s)
-        addCss=1
-        ;;
-      e)
-        case $OPTARG in
-          *[!a-z]*)
-            crc-utils die "$(crc-env misuseErrorCode)" "An invalid file extention"
-            ;;
-        esac
-
-        fileExtention="$OPTARG"
         ;;
       f)
         createFileComponent=1
         ;;
+      s)
+        addCss=1
+        ;;
+      d)
+        directory="$OPTARG"
+        ;;
+      l)
+        lifecycleMethods="$OPTARG"
+        ;;
+      h)
+        handlers="$OPTARG"
+        ;;
+      m)
+        methods="$OPTARG"
+        ;;
       *)
-        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options is set"
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options was given"
         ;;
     esac
   done
@@ -70,79 +198,59 @@ crc-create() {
   shift $((OPTIND - 1))
 
   componentName="${1^}"
+  shift
 
   if [[ -z $componentName ]]; then
-    crc-utils die "$(crc-env misuseErrorCode)" "A component name is required"
+    crc-utils die "$(crc-env misuseErrorCode)" "The name of a component is required"
+  fi
+
+  if [[ ! -d $directory ]]; then
+    crc-utils die "$(crc-env misuseErrorCode)" "The directory of a component doesn't exist"
   fi
 
   case $componentName in
     *[!A-Za-z0-9_]*)
-      crc-utils die "$(crc-env misuseErrorCode)" "A component name should contain only letters, digits and hyphens"
+      crc-utils die "$(crc-env misuseErrorCode)" "The name of a component should contain only letters, digits and hyphens"
       ;;
   esac
 
-  componentTemplate="$templateDir"/"$componentType".js
-  stylesTemplate="$templateDir"/css.css
-
-  if [[ ! -f $componentTemplate ]]; then
-    crc-utils die "$(crc-env generalErrorCode)" "The component's template file doesn't exist"
+  if [[ ! -d $templateDir ]]; then
+    crc-utils die "$(crc-env misuseErrorCode)" "The template directory doesn't exist"
   fi
 
-  if [[ $createFileComponent -eq 1 ]]; then
-    componentFile="$componentName"."$fileExtention"
+  stylesFileExtention="$(getStylesFileExtention)"
+  componentFileExtention="$(getComponentFileExtention)"
+  componentTemplate="$templateDir"/component."$componentFileExtention"
+  stylesTemplate="$templateDir"/styles."$stylesFileExtention"
+  componentFile="$componentName"."$componentFileExtention"
+  stylesFile=index."$stylesFileExtention"
 
-    if [[ -f "$componentFile". ]]; then
-      read -sn1 -p "The file already exists. Continue?" isContinue
-      echo
 
-      case $isContinue in
-        [!yY])
-          crc-utils die "$(crc-env successCode)" "Stop executing the script"
-          ;;
-      esac
+  if [[ $createFileComponent -eq 0 ]]; then
+    componentFile="$componentName"/"$componentFile"
+    stylesFile="$componentName"/"$stylesFile"
 
-      rm -f "$componentFile" || die "$(crc-env cannotExecuteErrorCode)" "The file can't be deleted"
-    fi
-
-    sedCommands="s/%COMPONENT_NAME%/$componentName/g; /%CSS_IMPORT%/d; s/%PROPS%//g"
-
-    sed "$sedCommands" "$componentTemplate" > "$componentFile"
+    createComponentDirectory "$directory"/"$componentName"
+    printf "%s" "export { default } from './$componentName';" > "$directory"/"$componentName"/index.js
   else
-    if [[ -d "$componentName" ]]; then
-      read -sn1 -p "The directory already exists. Continue?" isContinue
-      echo
-
-      case $isContinue in
-        [!yY])
-          crc-utils die "$(crc-env generalErrorCode)" "Stop executing the script"
-          ;;
-      esac
-
-      rm -rf "$componentName" || crc-utils die "$(crc-env cannotExecuteErrorCode)" "The directory can't be deleted"
-    fi
-
-    mkdir "$componentName" || crc-utils die "$(crc-env cannotExecuteErrorCode)" "The directory can't be created"
-
-    sedCommands="s/%COMPONENT_NAME%/$componentName/g; s/%PROPS%//g"
-
-    if [[ $addCss -eq 1 ]]; then 
-      sedCommands="$sedCommands""; s/%CSS_IMPORT%/import '.\/index.css';/g"
-
-      if [[ ! -f $stylesTemplate ]]; then
-        crc-utils die "$(crc-env cannotExecuteErrorCode)" "The css template file doesn't exist"
-      fi
-
-      sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$componentName"/index.css
-    else
-      sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
-    fi
-
-    sed "$sedCommands" "$componentTemplate" > "$componentName"/"$componentName"."$fileExtention"
-
-    printf "%s" "export { default } from './$componentName';" > "$componentName"/index.js
+    addCss=0
   fi
+
+  componentFile="$directory"/"$componentFile"
+  stylesFile="$directory"/"$stylesFile"
+
+  sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss")"
+  sedCommands="$sedCommands""; $(addLifecycleMethods "$lifecycleMethods"); $(addHandlers "$handlers")"
+  sedCommands="$sedCommands""; $(addMethods "$methods"); $(addProps "$@")"
+
+  echo "$sedCommands"
+
+  createStylesFile "$addCss" "$stylesTemplate" "$componentName" "$stylesFile"
+  createComponentFile "$sedCommands" "$componentTemplate" "$componentFile"
 
   echo 'The component has been successfully created'
 }
+
+crc-create SomeComponent
 
 crcCreateLoaded=1
