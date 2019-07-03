@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 // %PROP_TYPES_IMPORT%
 
-// %ADDITIONAL_IMPORT%
-
 %CSS_IMPORT%
 
 class %COMPONENT_NAME% extends Component {
+  %HANDLERS%
+  %METHODS%
+  %LIFECYCLEC_METHODS%
   render() {
     const %PROPS% = this.props;
     return (
@@ -18,7 +19,5 @@ class %COMPONENT_NAME% extends Component {
 // %PROP_TYPES_DEFINITION%
 
 // %DEFAULT_PROPS%
-
-// %CONNECT%
 
 export default %COMPONENT_NAME%;
