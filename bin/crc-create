@@ -12,7 +12,6 @@
 #:          -l <LIFECYCLE_METHODS> - add a given list of lifecycle methods
 #:          -h <HANDLERS> - add a given list of arrow functions
 #:          -m <METHODS> - add a given list of methods
-#:          -i - create a component interactively
 
 [[ $crcCreateLoaded ]] && return
 
@@ -21,6 +20,8 @@ source ./crc-config
 source ./crc-utils
 source ./crc-input
 
+# DESCRIPTION: Replace the css import variable
+# USAGE: addStylesOutput ARGUMENT
 addStylesOutput() {
   local sedCommands
 
@@ -33,6 +34,8 @@ addStylesOutput() {
   echo "$sedCommands"
 }
 
+# DESCRIPTION: Return the extention of the styles file
+# USAGE: getStylesFileExtention
 getStylesFileExtention() {
   if [[ -f "$templateDir"/styles.css ]]; then
     echo css
@@ -47,6 +50,8 @@ getStylesFileExtention() {
   fi
 }
 
+# DESCRIPTION: Create the styles file
+# USAGE: createStylesFile ARGUMENTS
 createStylesFile() {
   local addStyles
   local componentName
@@ -68,10 +73,14 @@ createStylesFile() {
   sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$stylesFile"
 }
 
+# DESCRIPTION: Return a sed command for a component name replacement
+# USAGE: replaceComponentName
 replaceComponentName() {
   echo "s/%COMPONENT_NAME%/$1/g"
 }
 
+# DESCRIPTION: Create the component file
+# USAGE: createComponentFile ARGUMENTS
 createComponentFile() {
   local sedCommands
   local componentTemplate
@@ -98,6 +107,8 @@ createComponentFile() {
   sed "$sedCommands" "$componentTemplate" > "$componentFile"
 }
 
+# DESCRIPTION: Create the component directory
+# USAGE: createComponentDirectory ARGUMENT
 createComponentDirectory() {
   local componentName
   componentName="$1"
@@ -117,6 +128,8 @@ createComponentDirectory() {
   mkdir "$componentName" || crc-utils die "$(crc-env cannotExecuteErrorCode)" "The directory can't be created"
 }
 
+# DESCRIPTION: Return the extention of the component file
+# USAGE: getComponentFileExtention
 getComponentFileExtention() {
   if [[ -f "$templateDir"/component.js ]]; then
     echo js
@@ -129,8 +142,11 @@ getComponentFileExtention() {
   fi
 }
 
+# DESCRIPTION: Return a sed command for lifecycle methods
+# USAGE: addLifecycleMethods ARGUMENT
 addLifecycleMethods() {
   local output
+  local IFS
   output=
 
   if [[ -n $1 ]]; then
@@ -153,6 +169,8 @@ addLifecycleMethods() {
   fi
 }
 
+# DESCRIPTION: Return a sed command for handlers
+# USAGE: addHandlers ARGUMENT
 addHandlers() {
   local output
   output=
@@ -173,6 +191,8 @@ addHandlers() {
   fi
 }
 
+# DESCRIPTION: Return a sed command for methods
+# USAGE: addMethods ARGUMENT
 addMethods() {
   local output
   output=
@@ -193,10 +213,14 @@ addMethods() {
   fi
 }
 
+# DESCRIPTION: Return a sed command for props
+# USAGE: addProps ARGUMENT
 addProps() {
   echo '/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
 }
 
+# DESCRIPTION: Create a React component
+# USAGE: crc-create ARGUMENTs
 crc-create() {
   crc-config read
 
@@ -209,12 +233,11 @@ crc-create() {
   lifecycleMethods=
   handlers=
   methods=
-  interactive=0
 
   templateDir="$(crc-env templateDirectory)/$template"
 
   ## Options
-  opts=t:fsd:l:h:m:i
+  opts=t:fsd:l:h:m:
   OPTIND=1
 
   while getopts $opts opt; do
