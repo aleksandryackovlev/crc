@@ -6,7 +6,7 @@ source ./crc-help
   run showUsageInfo
 
   [ "${lines[0]}" = 'crc - Create a react component' ]
-  [ "${lines[1]}" = 'USAGE: crc [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME' ]
+  [ "${lines[1]}" = 'USAGE: "crc <COMMAND> [<ARGUMENTS>] [<COMPONENT_NAME>]"' ]
 }
 
 # showVersionInfo test cases
@@ -19,18 +19,11 @@ source ./crc-help
 
 
 # crc-help test cases
-@test "[crc-help] crc-help usage: should proxy its arguments to the showUsageInfo function" {
-  run crc-help usage
-
-  [ "${lines[0]}" = 'crc - Create a react component' ]
-  [ "${lines[1]}" = 'USAGE: crc [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME' ]
-}
-
 @test "[crc-help] crc-help: should proxy call the showUsageInfo function if not any argument is given" {
   run crc-help
 
   [ "${lines[0]}" = 'crc - Create a react component' ]
-  [ "${lines[1]}" = 'USAGE: crc [-t COMPONENT_TYPE] [-d TEMPLATE_DIR] [-e FILE_EXTENTION] [-s] [-f] COMPONENT_NAME' ]
+  [ "${lines[1]}" = 'USAGE: "crc <COMMAND> [<ARGUMENTS>] [<COMPONENT_NAME>]"' ]
 }
 
 @test "[crc-help] crc-help version: should proxy its arguments to the showVersion function" {
