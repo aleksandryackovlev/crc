@@ -23,20 +23,19 @@ source ./crc-input
 # DESCRIPTION: Replace the css import variable
 # USAGE: addStylesOutput ARGUMENT
 addStylesOutput() {
-  local sedCommands
-
   if [[ "${1:-0}" -eq 1 ]]; then 
-    sedCommands="s/%CSS_IMPORT%/import '.\/index.css';/g"
+    echo "s/%CSS_IMPORT%/import '.\/index.${2:-css}';/g"
   else
-    sedCommands="$sedCommands"'; /%CSS_IMPORT%/d'
+    echo '/%CSS_IMPORT%/d'
   fi
-
-  echo "$sedCommands"
 }
 
 # DESCRIPTION: Return the extention of the styles file
 # USAGE: getStylesFileExtention
 getStylesFileExtention() {
+  local templateDir
+  templateDir=$1
+
   if [[ -f "$templateDir"/styles.css ]]; then
     echo css
   elif [[ -f "$templateDir"/styles.scss ]]; then
@@ -56,6 +55,7 @@ createStylesFile() {
   local addStyles
   local componentName
   local stylesTemplate
+  local stylesFile
 
   addStyles="$1"
   stylesTemplate="$2"
@@ -92,6 +92,10 @@ createComponentFile() {
   componentFile="$3"
   replaceFile=
 
+  if [[ ! -f $componentTemplate ]]; then
+    crc-utils die "$(crc-env cannotExecuteErrorCode)" "The css template file doesn't exist"
+  fi
+
   if [[ -f "$componentFile" ]]; then
     replaceFile="$(crc-input radio -p "The file already exists. Continue?")"
 
@@ -113,6 +117,10 @@ createComponentDirectory() {
   local componentName
   componentName="$1"
 
+  if [[ -z $componentName ]]; then
+    crc-utils die "$(crc-env cannotExecuteErrorCode)" "The component name is not given"
+  fi
+
   if [[ -d "$componentName" ]]; then
     replaceDirectory="$(crc-input radio -p "The directory already exists. Continue?")"
 
@@ -131,6 +139,9 @@ createComponentDirectory() {
 # DESCRIPTION: Return the extention of the component file
 # USAGE: getComponentFileExtention
 getComponentFileExtention() {
+  local templateDir
+  templateDir="$1"
+
   if [[ -f "$templateDir"/component.js ]]; then
     echo js
   elif [[ -f "$templateDir"/component.jsx ]]; then
@@ -293,8 +304,8 @@ crc-create() {
     crc-utils die "$(crc-env misuseErrorCode)" "The template directory doesn't exist"
   fi
 
-  stylesFileExtention="$(getStylesFileExtention)"
-  componentFileExtention="$(getComponentFileExtention)"
+  stylesFileExtention="$(getStylesFileExtention "$templateDir")"
+  componentFileExtention="$(getComponentFileExtention "$templateDir")"
   componentTemplate="$templateDir"/component."$componentFileExtention"
   stylesTemplate="$templateDir"/styles."$stylesFileExtention"
   componentFile="$componentName"."$componentFileExtention"
@@ -314,7 +325,7 @@ crc-create() {
   componentFile="$directory"/"$componentFile"
   stylesFile="$directory"/"$stylesFile"
 
-  sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss")"
+  sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss" "$stylesFileExtention")"
   sedCommands="$sedCommands""; $(addLifecycleMethods "$lifecycleMethods"); $(addHandlers "$handlers")"
   sedCommands="$sedCommands""; $(addMethods "$methods"); $(addProps "$@")"
 
@@ -326,6 +337,6 @@ crc-create() {
   echo 'The component has been successfully created'
 }
 
-crc-create -m "doSomething" -h "handleSubmit:handleClick" -l "componentDidMount:componentWillUnmount" SomeComponent
+# crc-create -m "doSomething" -h "handleSubmit:handleClick" -l "componentDidMount:componentWillUnmount" SomeComponent
 
 crcCreateLoaded=1
