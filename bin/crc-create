@@ -371,6 +371,4 @@ crc-create() {
   echo 'The component has been successfully created'
 }
 
-# crc-create -m "doSomething" -h "handleSubmit:handleClick" -l "componentDidMount:componentWillUnmount" SomeComponent
-
 crcCreateLoaded=1
