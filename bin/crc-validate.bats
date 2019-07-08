@@ -52,6 +52,30 @@ source ./crc-validate
   [ "$output" = "A number was given" ]
 }
 
+# alnum test cases
+@test "[crc-validate] crc-validate alnum: return an error string if not an alnum argument was given" {
+  run crc-validate alnum 'fk d'
+
+  [ "$output" = "Not an alnum was given" ]
+}
+
+@test "[crc-validate] crc-validate alnum: return an empty string if a valid value was given" {
+  run crc-validate alnum 32f
+
+  [ "$output" = "" ]
+}
+
+@test "[crc-validate] crc-validate alnum -r: return an empty string if not a alnum was given" {
+  run crc-validate alnum -r 'st ring'
+
+  [ "$output" = "" ]
+}
+
+@test "[crc-validate] crc-validate alnum -r: return an error string if not a alnum was given" {
+  run crc-validate alnum -r 34f
+
+  [ "$output" = "An alnum was given" ]
+}
 
 # file test cases
 @test "[crc-validate] crc-validate file: return an error string if not a file argument was given" {

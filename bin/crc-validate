@@ -41,6 +41,20 @@ crc-validate() {
         echo 'The field should be empty'
       fi
       ;;
+    alnum)
+      case $1 in
+        *[!0-9a-zA-Z_]*)
+          if [[ $isReverse -eq 0 ]]; then
+            echo 'Not an alnum was given'
+          fi
+        ;;
+        *)
+          if [[ $isReverse -eq 1 ]]; then
+            echo 'An alnum was given'
+          fi
+        ;;
+      esac
+      ;;
     number)
       case $1 in
         *[!0-9]*)
