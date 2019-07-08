@@ -115,3 +115,69 @@ teardown() {
 
   [ "$output" = jsx ]
 }
+
+@test "[crc-create] addLifecycleMethods: should throw an error if not an alnum argument was given" {
+  run addLifecycleMethods 'test gd:tes1'
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-create] addLifecycleMethods: should return the sed command for the component's lifecycles replacement" {
+  run addLifecycleMethods "componentDidMount:shouldComponentUpdate"
+
+  [ "$output" = 's/%LIFECYCLE_METHODS%/componentDidMount() {\n\n  }\n\n  shouldComponentUpdate() {\n\n  }\n/g' ]
+}
+
+@test "[crc-create] addLifecycleMethods: should skip unknown lifecycle methods" {
+  run addLifecycleMethods "componentDidMount:someMethod:shouldComponentUpdate"
+
+  [ "$output" = 's/%LIFECYCLE_METHODS%/componentDidMount() {\n\n  }\n\n  shouldComponentUpdate() {\n\n  }\n/g' ]
+}
+
+@test "[crc-create] addLifecycleMethods: should remove the lifecycle variable if not any known method was given" {
+  run addLifecycleMethods "componentDid1Mount:someMethod:shouldCompo2nentUpdate"
+
+  [ "$output" = '/%LIFECYCLE_METHODS%/d' ]
+}
+
+@test "[crc-create] addLifecycleMethods: should remove the lifecycle variable if the argument was not given" {
+  run addLifecycleMethods
+
+  [ "$output" = '/%LIFECYCLE_METHODS%/d' ]
+}
+
+@test "[crc-create] addHandlers: should throw an error if not an alnum argument was given" {
+  run addHandlers 'test gd:tes1'
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-create] addHandlers: should return the sed command for the component's handlers replacement" {
+  run addHandlers "doSomething:doSomethingElse"
+
+  [ "$output" = 's/%HANDLERS%/doSomething = () => {\n\n  };\n\n  doSomethingElse = () => {\n\n  };\n/g' ]
+}
+
+@test "[crc-create] addHandlers: should remove the handlers variable if the argument was not given" {
+  run addHandlers
+
+  [ "$output" = '/%HANDLERS%/d' ]
+}
+
+@test "[crc-create] addMethods: should throw an error if not an alnum argument was given" {
+  run addMethods 'test gd:tes1'
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-create] addMethods: should return the sed command for the component's methods replacement" {
+  run addMethods "doSomething:doSomethingElse"
+
+  [ "$output" = 's/%METHODS%/doSomething() {\n\n  }\n\n  doSomethingElse() {\n\n  }\n/g' ]
+}
+
+@test "[crc-create] addMethods: should remove the methods variable if the argument was not given" {
+  run addMethods
+
+  [ "$output" = '/%METHODS%/d' ]
+}
