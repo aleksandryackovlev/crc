@@ -161,14 +161,14 @@ SYNOPSIS
 DESCRIPTION
         The command handles local config files.
 
-        If there is no a config file in PWD, it is going to be looked for in ancestor directories.
+        If there is no config file in PWD, it is going to be looked for in ancestor directories.
         The first file, that is found in a list of ancestor directories, is considered as an active
         local config.
 
         Config files are going to be edited in the default EDITOR.
 
 COMMANDS
-        create <DIRECTORY>
+        create [<DIRECTORY>]
             Create a local config file component.
             By default <DIRECTORY> is set to PWD
 
@@ -183,9 +183,11 @@ EXAMPLES
 
               $ crc config create 
 
+
           Edit the active config file if it exists:
 
               $ crc config edit 
+
 
           Delete the active config file if it exists:
 
