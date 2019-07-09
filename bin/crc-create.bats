@@ -181,3 +181,27 @@ teardown() {
 
   [ "$output" = '/%METHODS%/d' ]
 }
+
+@test "[crc-create] addProps: should throw an error if any prop doesn't have a prop type" {
+  run addProps SomeComponent "value:number" "handleClick"
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-create] addProps: should throw an error if an unknown prop type was given" {
+  run addProps SomeComponent "value:number" "handleClick:proptype"
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-create] addProps: should delete all props' replacements if props were not given" {
+  run addProps SomeComponent
+
+  [ "$output" = '/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d' ]
+}
+
+@test "[crc-create] addProps: should add given prop types to a new component" {
+  run addProps SomeComponent "value:number" "text:object:'shell'"
+
+  [ "$output" = '/%PROPS%/{\n  value,\n  text,\n}\n/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = {\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = {\n  text: '"'shell'"',\n};/g' ]
+}

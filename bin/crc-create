@@ -197,6 +197,7 @@ addLifecycleMethods() {
 addHandlers() {
   local output
   local isAlnum
+  local IFS
   output=
 
   if [[ -n $1 ]]; then
@@ -230,6 +231,8 @@ addHandlers() {
 addMethods() {
   local output
   local isAlnum
+  local IFS
+
   output=
 
   if [[ -n $1 ]]; then
@@ -261,7 +264,83 @@ addMethods() {
 # DESCRIPTION: Return a sed command for props
 # USAGE: addProps ARGUMENT
 addProps() {
-  echo '/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
+  local output
+  local isAlnum
+  local IFS
+  local prop
+  local propType
+  local defaultProp
+  local propsOutput
+  local propTypesOutput
+  local componentName
+  local defaultPropsOutput
+
+  componentName="$1"
+  shift
+
+  output='/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
+
+  if [[ $# -eq 0 || -z $componentName ]]; then
+    echo "$output"
+    return 0;
+  fi
+
+
+  for propDefinition in "$@"; do
+    IFS=':' read -r prop propType defaultProp <<< "$propDefinition"
+    
+    if [[ -z $propType ]]; then
+      crc-utils die "$(crc-env generalErrorCode)" "Every prop should have a prop type definition"
+    fi
+
+    case $propType in
+      array|bool|func|number|object|string|symbol|node|element|oneOf*|oneOfType*|shape*|any|arrayOf*|objectOf*|instanceOf*)
+        ;;
+      *)
+        crc-utils die "$(crc-env generalErrorCode)" "An unknown prop type was given"
+        ;;
+    esac
+
+    if [[ -z $propsOutput && -n $prop ]]; then
+      propsOutput="$propsOutput{\n"
+    fi
+
+    if [[ -z $propTypesOutput ]]; then
+      propTypesOutput="$propTypesOutput""$componentName.propTypes = {\n"
+    fi
+
+    propsOutput="$propsOutput  $prop,\n"
+    propTypesOutput="$propTypesOutput  $prop: PropTypes.$propType"
+
+    if [[ -z $defaultProp ]]; then
+      propTypesOutput="$propTypesOutput.isRequired"
+    fi
+
+    if [[ -n $defaultProp ]]; then
+      defaultPropsOutput="$defaultPropsOutput  $prop: $defaultProp,\n"
+    fi
+
+    propTypesOutput="$propTypesOutput,\n"
+  done
+
+  if [[ -n $propsOutput ]]; then
+    propsOutput="${propsOutput}}\n"
+    propTypesOutput="${propTypesOutput}};\n"
+
+    output="/%PROPS%/$propsOutput/g; "
+    output="${output}s/%PROP_TYPES_IMPORT%/import PropTypes from 'prop-types';/g; "
+    output="${output}s/%PROP_TYPES_DEFINITION%/$propTypesOutput/g; "
+
+    if [[ -z $defaultPropsOutput ]]; then
+      output="${output}/%DEFAULT_PROPS%/d"
+    else
+      defaultPropsOutput="$componentName.defaultProps = {\n${defaultPropsOutput}};"
+
+      output="${output}s/%DEFAULT_PROPS%/$defaultPropsOutput/g"
+    fi
+  fi
+
+  echo "$output"
 }
 
 # DESCRIPTION: Create a React component
