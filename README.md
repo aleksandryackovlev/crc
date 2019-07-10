@@ -1,16 +1,16 @@
  # CRC - Create React Component
 An easy to use cli-tool that simplifies the process of creation of React components.
 
-### crc create
+## crc create
 Create React component
-#### Synopsis
+### Synopsis
 ```shell
 crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>] [ -l <LIFECYCLE_METHODS>]
     [-h <HANDLERS>] [-m <METHODS>] <COMPONENT_NAME> [<PROPS>]
 ```
-#### Description
+### Description
 If a placeholder for an option is not defined in a template, it will not appear in the resulting file even if it is set in the command.
-#### Options
+### Options
 **-f**  
 Create a file component.
 
@@ -35,7 +35,7 @@ The name of a component that should be created written in camelcase.
 **< PROPS>**  
 A list of props that should be added to a component. Every props should be written a separate parameter and should consist of a name, propType and defaultProp separated by colons. If a defaultProp is not given the prop is considered as a required one.
 
-#### Examples
+### Examples
 Create a directory with a SomeComponent component from the default template:
 ```shell
 $ crc create SomeComponent
