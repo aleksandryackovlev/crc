@@ -80,7 +80,7 @@ crc config <COMMAND>
 The command handles local config files. If there is no config file in PWD, it is going to be looked for in ancestor directories. The first file, that is found in a list of ancestor directories, is considered as an active local config. Config files are going to be edited in the default EDITOR.
 
 ### Commands
-**create [<DIRECTORY>]**  
+**create [< DIRECTORY>]**  
 &nbsp;&nbsp;&nbsp;&nbsp; Create a local config file component. By default <DIRECTORY> is set to PWD
 
 **edit**  

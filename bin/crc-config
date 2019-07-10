@@ -8,8 +8,8 @@
 
 [[ $crcConfigLoaded ]] && return
 
-source ./crc-env
-source ./crc-utils
+source crc-env
+source crc-utils
 
 # DESCRIPTION: Sources the global config file if it exists
 # USAGE: readGlobalConfig

@@ -8,7 +8,7 @@
 
 [[ $crcOutputLoaded ]] && return
 
-source ./crc-env
+source crc-env
 
 # Command Sequence Introducer
 esc=$'\e'

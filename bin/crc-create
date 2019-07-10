@@ -15,11 +15,11 @@
 
 [[ $crcCreateLoaded ]] && return
 
-source ./crc-env
-source ./crc-config
-source ./crc-utils
-source ./crc-validate
-source ./crc-input
+source crc-env
+source crc-config
+source crc-utils
+source crc-validate
+source crc-input
 
 # DESCRIPTION: Replace the css import variable
 # USAGE: addStylesOutput ARGUMENT
@@ -278,7 +278,7 @@ addProps() {
   componentName="$1"
   shift
 
-  output='/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
+  output='/%PROP_TYPES_IMPORT%/d; s/%PROPS%//g; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
 
   if [[ $# -eq 0 || -z $componentName ]]; then
     echo "$output"
@@ -302,11 +302,11 @@ addProps() {
     esac
 
     if [[ -z $propsOutput && -n $prop ]]; then
-      propsOutput="$propsOutput{\n"
+      propsOutput="$propsOutput\{\n"
     fi
 
     if [[ -z $propTypesOutput ]]; then
-      propTypesOutput="$propTypesOutput""$componentName.propTypes = {\n"
+      propTypesOutput="$propTypesOutput""$componentName.propTypes = \{\n"
     fi
 
     propsOutput="$propsOutput  $prop,\n"
@@ -324,17 +324,17 @@ addProps() {
   done
 
   if [[ -n $propsOutput ]]; then
-    propsOutput="${propsOutput}}\n"
-    propTypesOutput="${propTypesOutput}};\n"
+    propsOutput="${propsOutput}\}"
+    propTypesOutput="${propTypesOutput}\};\n"
 
-    output="/%PROPS%/$propsOutput/g; "
+    output="s/%PROPS%/$propsOutput/g; "
     output="${output}s/%PROP_TYPES_IMPORT%/import PropTypes from 'prop-types';/g; "
     output="${output}s/%PROP_TYPES_DEFINITION%/$propTypesOutput/g; "
 
     if [[ -z $defaultPropsOutput ]]; then
       output="${output}/%DEFAULT_PROPS%/d"
     else
-      defaultPropsOutput="$componentName.defaultProps = {\n${defaultPropsOutput}};"
+      defaultPropsOutput="$componentName.defaultProps = \{\n${defaultPropsOutput}\};\n"
 
       output="${output}s/%DEFAULT_PROPS%/$defaultPropsOutput/g"
     fi
@@ -440,7 +440,7 @@ crc-create() {
 
   sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss" "$stylesFileExtention")"
   sedCommands="$sedCommands""; $(addLifecycleMethods "$lifecycleMethods"); $(addHandlers "$handlers")"
-  sedCommands="$sedCommands""; $(addMethods "$methods"); $(addProps "$@")"
+  sedCommands="$sedCommands""; $(addMethods "$methods"); $(addProps "$componentName" "$@")"
 
   echo "$sedCommands"
 

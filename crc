@@ -8,12 +8,12 @@
 
 crcDirectory="$HOME/.crc"
 
-source "${crcDirectory}/bin/crc-env"
-source "${crcDirectory}/bin/crc-create"
-source "${crcDirectory}/bin/crc-config"
-source "${crcDirectory}/bin/crc-template"
-source "${crcDirectory}/bin/crc-help"
-source "${crcDirectory}/bin/crc-utils"
+source crc-env
+source crc-create
+source crc-config
+source crc-template
+source crc-help
+source crc-utils
 
 commandToExec=$1
 shift

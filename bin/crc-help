@@ -8,8 +8,8 @@
 
 [[ $crcHelpLoaded ]] && return
 
-source ./crc-env
-source ./crc-utils
+source crc-env
+source crc-utils
 
 # DESCRIPTION: Print the usage information
 # USAGE: usage
@@ -20,9 +20,9 @@ USAGE: "$(crc-env usage)"
 
 These are command used in various situations:
 
-    create        Create a React component
-    template      Create, read, update or delete a template
-    config        Create, edit or delete a local crc config for a directory
+    create        Create React component
+    template      Create, read, update or delete templates
+    config        Create, edit or delete local crc config files for different directories
 
 See 'crc help <COMMAND>' to read about a specific subcommand.
 HELP

@@ -8,10 +8,10 @@
 
 [[ $crcInputLoaded ]] && return
 
-source ./crc-env
-source ./crc-utils
-source ./crc-output
-source ./crc-validate
+source crc-env
+source crc-utils
+source crc-output
+source crc-validate
 
 # DESCRIPTION: Shows a text prompt to a user
 # USAGE: textInput [OPTIONS]

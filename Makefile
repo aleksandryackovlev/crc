@@ -16,6 +16,17 @@ SCRIPT_FILES+=bin/crc-template
 SCRIPT_FILES+=bin/crc-utils
 SCRIPT_FILES+=bin/crc-validate
 
+
+REM_SCRIPT_FILES=crc-config
+REM_SCRIPT_FILES+=crc-create
+REM_SCRIPT_FILES+=crc-env
+REM_SCRIPT_FILES+=crc-help
+REM_SCRIPT_FILES+=crc-input
+REM_SCRIPT_FILES+=crc-output
+REM_SCRIPT_FILES+=crc-template
+REM_SCRIPT_FILES+=crc-utils
+REM_SCRIPT_FILES+=crc-validate
+
 CONFIG_FILE=.crcrc
 
 all:
@@ -26,7 +37,7 @@ install:
 	mkdir -p $(crc_dir)/bin
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(EXEC_FILES) $(prefix)/bin
-	install -m 0644 $(SCRIPT_FILES) $(crc_dir)/bin
+	install -m 0644 $(SCRIPT_FILES) $(prefix)/bin
 	install -m 0644 $(CONFIG_FILE) ~
 	cp -r template $(crc_dir)/template
 	cp $(CONFIG_FILE) ~/$(CONFIG_FILE)
@@ -35,6 +46,7 @@ uninstall:
 	test -d $(prefix)/bin && \
 	cd $(prefix)/bin && \
 	rm -f $(EXEC_FILES)
+	rm -f $(REM_SCRIPT_FILES)
 	rm -f ~/$(CONFIG_FILE)
 	test -d $(crc_dir) && \
 	rm -rf $(crc_dir)

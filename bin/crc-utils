@@ -8,9 +8,9 @@
 
 [[ $crcUtilsLoaded ]] && return
 
-source ./crc-env
-source ./crc-output
-source ./crc-validate
+source crc-env
+source crc-output
+source crc-validate
 
 # DESCRIPTION: Print an error message and exit with the given status code
 # USAGE: die STATUS [MESSAGE]
