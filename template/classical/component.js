@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// %PROP_TYPES_IMPORT%
+%PROP_TYPES_IMPORT%
 
 %CSS_IMPORT%
 
@@ -16,8 +16,7 @@ class %COMPONENT_NAME% extends Component {
     );
   }
 }
-// %PROP_TYPES_DEFINITION%
 
-// %DEFAULT_PROPS%
-
+%PROP_TYPES_DEFINITION%
+%DEFAULT_PROPS%
 export default %COMPONENT_NAME%;
