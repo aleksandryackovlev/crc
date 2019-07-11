@@ -117,91 +117,93 @@ teardown() {
 }
 
 @test "[crc-create] addLifecycleMethods: should throw an error if not an alnum argument was given" {
-  run addLifecycleMethods 'test gd:tes1'
+  run addLifecycleMethods '  ' 'test gd:tes1'
 
   [ "$status" -eq 1 ]
 }
 
 @test "[crc-create] addLifecycleMethods: should return the sed command for the component's lifecycles replacement" {
-  run addLifecycleMethods "componentDidMount:shouldComponentUpdate"
+  run addLifecycleMethods '  ' "componentDidMount:shouldComponentUpdate"
 
   [ "$output" = 's/%LIFECYCLE_METHODS%/componentDidMount() {\n\n  }\n\n  shouldComponentUpdate() {\n\n  }\n/g' ]
 }
 
 @test "[crc-create] addLifecycleMethods: should skip unknown lifecycle methods" {
-  run addLifecycleMethods "componentDidMount:someMethod:shouldComponentUpdate"
+  run addLifecycleMethods '  ' "componentDidMount:someMethod:shouldComponentUpdate"
 
   [ "$output" = 's/%LIFECYCLE_METHODS%/componentDidMount() {\n\n  }\n\n  shouldComponentUpdate() {\n\n  }\n/g' ]
 }
 
 @test "[crc-create] addLifecycleMethods: should remove the lifecycle variable if not any known method was given" {
-  run addLifecycleMethods "componentDid1Mount:someMethod:shouldCompo2nentUpdate"
+  run addLifecycleMethods '  ' "componentDid1Mount:someMethod:shouldCompo2nentUpdate"
 
   [ "$output" = '/%LIFECYCLE_METHODS%/d' ]
 }
 
 @test "[crc-create] addLifecycleMethods: should remove the lifecycle variable if the argument was not given" {
-  run addLifecycleMethods
+  run addLifecycleMethods '  '
 
   [ "$output" = '/%LIFECYCLE_METHODS%/d' ]
 }
 
 @test "[crc-create] addHandlers: should throw an error if not an alnum argument was given" {
-  run addHandlers 'test gd:tes1'
+  run addHandlers '  ' 'test gd:tes1'
 
   [ "$status" -eq 1 ]
 }
 
 @test "[crc-create] addHandlers: should return the sed command for the component's handlers replacement" {
-  run addHandlers "doSomething:doSomethingElse"
+  run addHandlers '  ' "doSomething:doSomethingElse"
 
   [ "$output" = 's/%HANDLERS%/doSomething = () => {\n\n  };\n\n  doSomethingElse = () => {\n\n  };\n/g' ]
 }
 
 @test "[crc-create] addHandlers: should remove the handlers variable if the argument was not given" {
-  run addHandlers
+  run addHandlers '  '
 
   [ "$output" = '/%HANDLERS%/d' ]
 }
 
 @test "[crc-create] addMethods: should throw an error if not an alnum argument was given" {
-  run addMethods 'test gd:tes1'
+  run addMethods '  ' 'test gd:tes1'
 
   [ "$status" -eq 1 ]
 }
 
 @test "[crc-create] addMethods: should return the sed command for the component's methods replacement" {
-  run addMethods "doSomething:doSomethingElse"
+  run addMethods '  ' "doSomething:doSomethingElse"
 
   [ "$output" = 's/%METHODS%/doSomething() {\n\n  }\n\n  doSomethingElse() {\n\n  }\n/g' ]
 }
 
 @test "[crc-create] addMethods: should remove the methods variable if the argument was not given" {
-  run addMethods
+  run addMethods '  '
 
   [ "$output" = '/%METHODS%/d' ]
 }
 
 @test "[crc-create] addProps: should throw an error if any prop doesn't have a prop type" {
-  run addProps SomeComponent "value:number" "handleClick"
+  run addProps '  ' SomeComponent "value:number" "handleClick"
 
   [ "$status" -eq 1 ]
 }
 
 @test "[crc-create] addProps: should throw an error if an unknown prop type was given" {
-  run addProps SomeComponent "value:number" "handleClick:proptype"
+  run addProps '  ' SomeComponent "value:number" "handleClick:proptype"
 
   [ "$status" -eq 1 ]
 }
 
 @test "[crc-create] addProps: should delete all props' replacements if props were not given" {
-  run addProps SomeComponent
+  run addProps '  ' SomeComponent
 
-  [ "$output" = '/%PROP_TYPES_IMPORT%/d; /%PROPS%/d; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d' ]
+  [ "$output" = '/%PROP_TYPES_IMPORT%/d; s/%PROPS%//g; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d' ]
 }
 
 @test "[crc-create] addProps: should add given prop types to a new component" {
-  run addProps SomeComponent "value:number" "text:object:'shell'"
+  run addProps '  ' SomeComponent "value:number" "text:object:'shell'"
 
-  [ "$output" = '/%PROPS%/{\n  value,\n  text,\n}\n/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = {\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = {\n  text: '"'shell'"',\n};/g' ]
+  expectedOutput='s/%PROPS%/\{\n  value,\n  text,\n\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
+  printf "%s\n" "$output" "$expectedOutput" > te
+  [ "$output" = "$expectedOutput" ]
 }

@@ -160,7 +160,10 @@ addLifecycleMethods() {
   local output
   local IFS
   local isAlnum
+  local indentation
   output=
+  indentation="$1"
+  shift
 
   if [[ -n $1 ]]; then
     IFS=':' read -ra methods <<< "$1"
@@ -175,9 +178,9 @@ addLifecycleMethods() {
       case "$method" in
         componentDidMount|shouldComponentUpdate|getSnapshotBeforUpdate|componentDidUpdate|componentDidCatch|componentWillUnmount)
           if [[ -n $output ]]; then
-            output="$output\n  "
+            output="$output\n${indentation}"
           fi
-          output="${output}${method}() {\n\n  }\n"
+          output="${output}${method}() {\n\n${indentation}}\n"
           ;;
       esac
     done
@@ -198,7 +201,10 @@ addHandlers() {
   local output
   local isAlnum
   local IFS
+  local indentation
   output=
+  indentation="$1"
+  shift
 
   if [[ -n $1 ]]; then
     IFS=':' read -ra methods <<< "$1"
@@ -211,9 +217,9 @@ addHandlers() {
       fi
 
       if [[ -n $output ]]; then
-        output="$output\n  "
+        output="$output\n${indentation}"
       fi
-      output="${output}${method} = () => {\n\n  };\n"
+      output="${output}${method} = () => {\n\n${indentation}};\n"
     done
 
     if [[ -n $output ]]; then
@@ -232,8 +238,10 @@ addMethods() {
   local output
   local isAlnum
   local IFS
-
+  local indentation
   output=
+  indentation="$1"
+  shift
 
   if [[ -n $1 ]]; then
     IFS=':' read -ra methods <<< "$1"
@@ -246,9 +254,9 @@ addMethods() {
       fi
 
       if [[ -n $output ]]; then
-        output="$output\n  "
+        output="$output\n${indentation}"
       fi
-      output="${output}${method}() {\n\n  }\n"
+      output="${output}${method}() {\n\n${indentation}}\n"
     done
 
     if [[ -n $output ]]; then
@@ -274,6 +282,10 @@ addProps() {
   local propTypesOutput
   local componentName
   local defaultPropsOutput
+  local indentation
+
+  indentation="$1"
+  shift
 
   componentName="$1"
   shift
@@ -309,15 +321,15 @@ addProps() {
       propTypesOutput="$propTypesOutput""$componentName.propTypes = \{\n"
     fi
 
-    propsOutput="$propsOutput  $prop,\n"
-    propTypesOutput="$propTypesOutput  $prop: PropTypes.$propType"
+    propsOutput="$propsOutput${indentation}$prop,\n"
+    propTypesOutput="$propTypesOutput${indentation}$prop: PropTypes.$propType"
 
     if [[ -z $defaultProp ]]; then
       propTypesOutput="$propTypesOutput.isRequired"
     fi
 
     if [[ -n $defaultProp ]]; then
-      defaultPropsOutput="$defaultPropsOutput  $prop: $defaultProp,\n"
+      defaultPropsOutput="$defaultPropsOutput${indentation}$prop: $defaultProp,\n"
     fi
 
     propTypesOutput="$propTypesOutput,\n"
@@ -353,6 +365,7 @@ crc-create() {
   template="${template:-$defaultTemplate}"
   createFileComponent="${createFileComponent:-$defaultCreateFileComponent}"
   addCss="${addCss:-$defaultAddCss}"
+  indentation="${indentation:-$defaultIndentation}"
   directory="$PWD"
   lifecycleMethods=
   handlers=
@@ -439,8 +452,8 @@ crc-create() {
   stylesFile="$directory"/"$stylesFile"
 
   sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss" "$stylesFileExtention")"
-  sedCommands="$sedCommands""; $(addLifecycleMethods "$lifecycleMethods"); $(addHandlers "$handlers")"
-  sedCommands="$sedCommands""; $(addMethods "$methods"); $(addProps "$componentName" "$@")"
+  sedCommands="$sedCommands""; $(addLifecycleMethods "$indentation" "$lifecycleMethods"); $(addHandlers "$indentation" "$handlers")"
+  sedCommands="$sedCommands""; $(addMethods "$indentation" "$methods"); $(addProps "$indentation" "$componentName" "$@")"
 
   echo "$sedCommands"
 
