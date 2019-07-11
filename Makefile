@@ -4,7 +4,7 @@ CRC_DIR=~/.crc
 prefix=~/.local
 crc_dir=~/.crc
 
-EXEC_FILES=crc
+EXEC_FILES=bin/crc
 
 SCRIPT_FILES=bin/crc-config
 SCRIPT_FILES+=bin/crc-create
@@ -16,6 +16,8 @@ SCRIPT_FILES+=bin/crc-template
 SCRIPT_FILES+=bin/crc-utils
 SCRIPT_FILES+=bin/crc-validate
 
+
+REM_EXEC_FILES=bin/crc
 
 REM_SCRIPT_FILES=crc-config
 REM_SCRIPT_FILES+=crc-create
@@ -45,7 +47,7 @@ install:
 uninstall:
 	test -d $(prefix)/bin && \
 	cd $(prefix)/bin && \
-	rm -f $(EXEC_FILES)
+	rm -f $(REM_EXEC_FILES)
 	rm -f $(REM_SCRIPT_FILES)
 	rm -f ~/$(CONFIG_FILE)
 	test -d $(crc_dir) && \

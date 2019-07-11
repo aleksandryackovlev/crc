@@ -6,8 +6,6 @@
 #: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: DESCRIPTION: Create React Component
 
-crcDirectory="$HOME/.crc"
-
 source crc-env
 source crc-create
 source crc-config
