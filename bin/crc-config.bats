@@ -7,7 +7,6 @@ setup() {
   fi
 
   printf "createFileComponent=1\n" > ./"$configFileName"
-  printf "componentType=classical\n" >> ./"$configFileName"
 }
 
 teardown() {
@@ -21,8 +20,6 @@ teardown() {
   readGlobalConfig
 
   [ "$createFileComponent" -eq 0 ]
-  [ "$componentType" = functional ]
-  [ "$fileExtention" = js ]
   [ "$addCss" -eq 0 ]
   [ "$template" = 'default' ]
 }
@@ -32,7 +29,6 @@ teardown() {
   readLocalConfig
 
   [ "$createFileComponent" -eq 1 ]
-  [ "$componentType" = classical ]
 }
 
 # findLocalConfig test cases
@@ -148,8 +144,6 @@ teardown() {
   readConfig
 
   [ "$createFileComponent" -eq 1 ]
-  [ "$componentType" = classical ]
-  [ "$fileExtention" = js ]
   [ "$addCss" -eq 0 ]
   [ "$template" = 'default' ]
 }
@@ -185,8 +179,6 @@ teardown() {
   crc-config read
 
   [ "$createFileComponent" -eq 1 ]
-  [ "$componentType" = classical ]
-  [ "$fileExtention" = js ]
   [ "$addCss" -eq 0 ]
   [ "$template" = 'default' ]
 }

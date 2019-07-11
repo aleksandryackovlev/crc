@@ -31,10 +31,9 @@ export globalConfigFile="$HOME/$configFileName"
 
 ## Default config
 export defaultCreateFileComponent=0
-export defaultComponentType=functional
-export defaultFileExtention=js
 export defaultAddCss=0
 export defaultTemplate=default
+export defaultIndentation="  "
 
 # DESCRIPTION: Returns the value of an env variable
 # USAGE: crc-env ARGUMENT
