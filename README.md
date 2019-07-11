@@ -15,32 +15,35 @@ If a placeholder for an option is not defined in a template, it will not appear 
 &nbsp;&nbsp;&nbsp;&nbsp; Create a file component.
 
 **-s**  
-&nbsp;&nbsp;&nbsp;&nbsp; Add a styles to the component. Create a component from the template with the name <TEMPLATE>. By default it is set to a "default" template.
+&nbsp;&nbsp;&nbsp;&nbsp; Add styles to a new component.
 
-**-d <DIRECTORY>**  
-&nbsp;&nbsp;&nbsp;&nbsp; Create component in a <DIRECTORY>. By default it is set to the current working directory.
+**-t < TEMPLATE >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Create a component from the template with the name <TEMPLATE>. By default it is set to the "default" template.
 
-**-l <LIFECYCLE_METHODS>**  
+**-d < DIRECTORY >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Create a component in the <DIRECTORY>. By default it is set to the current working directory.
+
+**-l < LIFECYCLE_METHODS >**  
 &nbsp;&nbsp;&nbsp;&nbsp; Add a given list of lifecycle methods. Methods should be given as a string that consits of method names separated by colons.
 
-**-h <HANDLERS>**  
+**-h < HANDLERS >**  
 &nbsp;&nbsp;&nbsp;&nbsp; Add a given list of arrow functions. Handlers should be given as a string that consits of their names separated by colons.
 
-**-m <METHODS>**  
-&nbsp;&nbsp;&nbsp;&nbsp; Add a given list of methods. Handlers should be given as a string that consits of their names separated by colons.
+**-m < METHODS >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Add a given list of methods. Methods should be given as a string that consits of their names separated by colons.
 
-**<COMPONENT_NAME>**  
+**< COMPONENT_NAME >**  
 &nbsp;&nbsp;&nbsp;&nbsp; The name of a component that should be created written in camelcase.
 
-**< PROPS>**  
-&nbsp;&nbsp;&nbsp;&nbsp; A list of props that should be added to a component. Every props should be written a separate parameter and should consist of a name, propType and defaultProp separated by colons. If a defaultProp is not given the prop is considered as a required one.
+**< PROPS >**  
+&nbsp;&nbsp;&nbsp;&nbsp; A list of props that should be added to a component. Every prop should be written as a separate parameter and should consist of the name, propType and defaultProp separated by colons. If a defaultProp is not given the prop is considered as a required one.
 
 ### Examples
-Create a directory with a SomeComponent component from the default template:
+Create a directory with the SomeComponent component from the default template:
 ```shell
 $ crc create SomeComponent
 ```
-Create a directory with a SomeComponent component from the "some-template" template:
+Create a directory with the SomeComponent component from the "some-template" template:
 ```shell
 $ crc create -t some-template SomeComponent
 ```
@@ -48,23 +51,23 @@ Create a file component from the "some-template" template:
 ```shell
 $ crc create -t some-template -f SomeComponent
 ```
-Create a directory with a SomeComponent component from the "some-template" template adding styles:
+Create a directory with the SomeComponent component from the "some-template" template adding styles:
 ```shell
 $ crc create -t some-template -s SomeComponent
 ```
-Create a directory with a SomeComponent component from the "default" template adding a given list of props:
+Create a directory with the SomeComponent component from the "default" template adding a given list of props:
 ```shell
 $ crc create SomeComponent "somePropName:PropType:defalutValue"
 ```
-Create a directory with a SomeComponent component from the "default" template adding a given list of lifecycle methods:
+Create a directory with the SomeComponent component from the "default" template adding a given list of lifecycle methods:
 ```shell
 $ crc create -l "componentDidMount:componentWillUnmount" SomeComponent
 ```
-Create a directory with a SomeComponent component from the "default" template adding a given list of handlers:
+Create a directory with the SomeComponent component from the "default" template adding a given list of handlers:
 ```shell
 $ crc create -h "handleChange:handleClick" SomeComponent
 ```
-Create a SomeComponent component with a given list of handlers:
+Create the SomeComponent component with a given list of handlers:
 ```shell
 $ crc create -m "handleChange:handleClick" SomeComponent
 ```
