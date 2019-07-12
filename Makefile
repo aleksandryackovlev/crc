@@ -52,3 +52,7 @@ uninstall:
 	rm -f ~/$(CONFIG_FILE)
 	test -d $(crc_dir) && \
 	rm -rf $(crc_dir)
+
+test:
+	cd bin && \
+	bats -r .
