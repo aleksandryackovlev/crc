@@ -20,7 +20,6 @@ teardown() {
 @test "[crc-create] addStylesOutput: should return a sed command for adding a styles import" {
   run addStylesOutput 1 styl
 
-  echo "$output" > te
   [ "$output" = "s/%CSS_IMPORT%/import '.\/index.styl';/g" ]
 }
 

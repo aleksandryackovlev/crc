@@ -56,3 +56,5 @@ uninstall:
 test:
 	cd bin && \
 	bats -r .
+
+.PHONY: test

@@ -7,6 +7,4 @@ before_install:
   - bash /tmp/bats/install.sh /tmp/local
   - export PATH=$PATH:/tmp/local/bin
 
-install: make install
-
 script: make test
