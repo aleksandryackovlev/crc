@@ -1,4 +1,5 @@
  # CRC - Create React Component
+[![Build Status](https://travis-ci.org/aleksandryackovlev/crc.svg?branch=master)](https://travis-ci.org/aleksandryackovlev/crc)
 An easy to use cli-tool that simplifies the process of creation of React components.
 
 ## crc create
@@ -18,7 +19,7 @@ If a placeholder for an option is not defined in a template, it will not appear 
 &nbsp;&nbsp;&nbsp;&nbsp; Add styles to a new component.
 
 **-t < TEMPLATE >**  
-&nbsp;&nbsp;&nbsp;&nbsp; Create a component from the template with the name <TEMPLATE>. By default it is set to the "default" template.
+&nbsp;&nbsp;&nbsp;&nbsp; Create a component from the template with the name < TEMPLATE >. By default it is set to the "default" template.
 
 **-d < DIRECTORY >**  
 &nbsp;&nbsp;&nbsp;&nbsp; Create a component in the < DIRECTORY >. By default it is set to the current working directory.
@@ -77,14 +78,14 @@ Create, edit or delete local crc config files for different directories
 
 ### Synopsis
 ```shell
-crc config <COMMAND>
+crc config < COMMAND >
 ```
 ### Description
 The command handles local config files. If there is no config file in PWD, it is going to be looked for in ancestor directories. The first file, that is found in a list of ancestor directories, is considered as an active local config. Config files are going to be edited in the default EDITOR.
 
 ### Commands
-**create [< DIRECTORY>]**  
-&nbsp;&nbsp;&nbsp;&nbsp; Create a local config file component. By default <DIRECTORY> is set to PWD
+**create [< DIRECTORY >]**  
+&nbsp;&nbsp;&nbsp;&nbsp; Create a local config file component. By default < DIRECTORY > is set to PWD
 
 **edit**  
 &nbsp;&nbsp;&nbsp;&nbsp; Edit a local config file component if it exits.
