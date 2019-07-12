@@ -5,6 +5,6 @@ before_install:
   - git clone https://github.com/bats-core/bats-core.git /tmp/bats
   - mkdir -p /tmp/local
   - bash /tmp/bats/install.sh /tmp/local
-  - export PATH=$PATH:/tmp/local/bin
+  - export PATH=/tmp/local/bin:$PATH
 
 script: make test
