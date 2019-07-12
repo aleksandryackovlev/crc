@@ -33,7 +33,19 @@ export globalConfigFile="$HOME/$configFileName"
 export defaultCreateFileComponent=0
 export defaultAddCss=0
 export defaultTemplate=default
-export defaultIndentation="  "
+export defaultIndentation='  '
+
+## Placeholders
+export cssImportPlaceholder='%CSS_IMPORT%'
+export componentNamePlaceholder='%COMPONENT_NAME%'
+export indentationPlaceholder='	'
+export lifecycleMethodsPlaceholder='%LIFECYCLE_METHODS%'
+export handlersPlaceholder='%HANDLERS%'
+export methodsPlaceholder='%METHODS%'
+export propTypesImportPlaceholder='%PROP_TYPES_IMPORT%'
+export propsPlaceholder='%PROPS%'
+export propTypesDefinitionPlaceholder='%PROP_TYPES_DEFINITION%'
+export defaultPropsPlaceholder='%DEFAULT_PROPS%'
 
 # DESCRIPTION: Returns the value of an env variable
 # USAGE: crc-env ARGUMENT

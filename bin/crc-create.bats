@@ -20,6 +20,7 @@ teardown() {
 @test "[crc-create] addStylesOutput: should return a sed command for adding a styles import" {
   run addStylesOutput 1 styl
 
+  echo "$output" > te
   [ "$output" = "s/%CSS_IMPORT%/import '.\/index.styl';/g" ]
 }
 
@@ -75,7 +76,7 @@ teardown() {
 @test "[crc-create] replaceIndentation: should return the sed command for the indentation replacement" {
   run replaceIndentation '  '
 
-  [ "$output" = 's/%INDENTATION%/  /g' ]
+  [ "$output" = 's/	/  /g' ]
 }
 
 @test "[crc-create] createComponentFile: should create a new component file for a given component name" {
@@ -210,6 +211,5 @@ teardown() {
   run addProps '  ' SomeComponent "value:number" "text:object:'shell'"
 
   expectedOutput='s/%PROPS%/\{\n  value,\n  text,\n\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
-  printf "%s\n" "$output" "$expectedOutput" > te
   [ "$output" = "$expectedOutput" ]
 }

@@ -24,10 +24,13 @@ source crc-input
 # DESCRIPTION: Replace the css import variable
 # USAGE: addStylesOutput ARGUMENT
 addStylesOutput() {
+  local placeholder
+  placeholder="$(crc-env cssImportPlaceholder)"
+
   if [[ "${1:-0}" -eq 1 ]]; then 
-    echo "s/%CSS_IMPORT%/import '.\/index.${2:-css}';/g"
+    echo "s/$placeholder/import '.\/index.${2:-css}';/g"
   else
-    echo '/%CSS_IMPORT%/d'
+    echo "/$placeholder/d"
   fi
 }
 
@@ -71,19 +74,19 @@ createStylesFile() {
     crc-utils die "$(crc-env cannotExecuteErrorCode)" "The css template file doesn't exist"
   fi
 
-  sed "s/%COMPONENT_NAME%/${componentName,}/g" "$stylesTemplate" > "$stylesFile"
+  sed "s/$(crc-env componentNamePlaceholder)/${componentName,}/g" "$stylesTemplate" > "$stylesFile"
 }
 
 # DESCRIPTION: Return a sed command for a component name replacement
 # USAGE: replaceComponentName
 replaceComponentName() {
-  echo "s/%COMPONENT_NAME%/$1/g"
+  echo "s/$(crc-env componentNamePlaceholder)/$1/g"
 }
 
 # DESCRIPTION: Return a sed command for indentation replacement
 # USAGE: replaceComponentName
 replaceIndentation() {
-  echo "s/%INDENTATION%/$1/g"
+  echo "s/$(crc-env indentationPlaceholder)/$1/g"
 }
 
 # DESCRIPTION: Create the component file
@@ -192,12 +195,12 @@ addLifecycleMethods() {
     done
 
     if [[ -n $output ]]; then
-      echo "s/%LIFECYCLE_METHODS%/$output/g"
+      echo "s/$(crc-env lifecycleMethodsPlaceholder)/$output/g"
     else
-      echo '/%LIFECYCLE_METHODS%/d'
+      echo "/$(crc-env lifecycleMethodsPlaceholder)/d"
     fi
   else
-    echo '/%LIFECYCLE_METHODS%/d'
+    echo "/$(crc-env lifecycleMethodsPlaceholder)/d"
   fi
 }
 
@@ -229,12 +232,12 @@ addHandlers() {
     done
 
     if [[ -n $output ]]; then
-      echo "s/%HANDLERS%/$output/g"
+      echo "s/$(crc-env handlersPlaceholder)/$output/g"
     else
-      echo '/%HANDLERS%/d'
+      echo "/$(crc-env handlersPlaceholder)/d"
     fi
   else
-    echo '/%HANDLERS%/d'
+    echo "/$(crc-env handlersPlaceholder)/d"
   fi
 }
 
@@ -266,12 +269,12 @@ addMethods() {
     done
 
     if [[ -n $output ]]; then
-      echo "s/%METHODS%/$output/g"
+      echo "s/$(crc-env methodsPlaceholder)/$output/g"
     else
-      echo '/%METHODS%/d'
+      echo "/$(crc-env methodsPlaceholder)/d"
     fi
   else
-    echo '/%METHODS%/d'
+    echo "/$(crc-env methodsPlaceholder)/d"
   fi
 }
 
@@ -296,7 +299,7 @@ addProps() {
   componentName="$1"
   shift
 
-  output='/%PROP_TYPES_IMPORT%/d; s/%PROPS%//g; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d'
+  output="/$(crc-env propTypesImportPlaceholder)/d; s/$(crc-env propsPlaceholder)//g; /$(crc-env propTypesDefinitionPlaceholder)/d; /$(crc-env defaultPropsPlaceholder)/d"
 
   if [[ $# -eq 0 || -z $componentName ]]; then
     echo "$output"
@@ -345,16 +348,16 @@ addProps() {
     propsOutput="${propsOutput}\}"
     propTypesOutput="${propTypesOutput}\};\n"
 
-    output="s/%PROPS%/$propsOutput/g; "
-    output="${output}s/%PROP_TYPES_IMPORT%/import PropTypes from 'prop-types';/g; "
-    output="${output}s/%PROP_TYPES_DEFINITION%/$propTypesOutput/g; "
+    output="s/$(crc-env propsPlaceholder)/$propsOutput/g; "
+    output="${output}s/$(crc-env propTypesImportPlaceholder)/import PropTypes from 'prop-types';/g; "
+    output="${output}s/$(crc-env propTypesDefinitionPlaceholder)/$propTypesOutput/g; "
 
     if [[ -z $defaultPropsOutput ]]; then
-      output="${output}/%DEFAULT_PROPS%/d"
+      output="${output}/$(crc-env defaultPropsPlaceholder)/d"
     else
       defaultPropsOutput="$componentName.defaultProps = \{\n${defaultPropsOutput}\};\n"
 
-      output="${output}s/%DEFAULT_PROPS%/$defaultPropsOutput/g"
+      output="${output}s/$(crc-env defaultPropsPlaceholder)/$defaultPropsOutput/g"
     fi
   fi
 
@@ -461,8 +464,6 @@ crc-create() {
   sedCommands="$sedCommands""; $(replaceIndentation "$indentation")"
   sedCommands="$sedCommands""; $(addLifecycleMethods "$indentation" "$lifecycleMethods"); $(addHandlers "$indentation" "$handlers")"
   sedCommands="$sedCommands""; $(addMethods "$indentation" "$methods"); $(addProps "$indentation" "$componentName" "$@")"
-
-  echo "$sedCommands"
 
   createStylesFile "$addCss" "$stylesTemplate" "$componentName" "$stylesFile"
   createComponentFile "$sedCommands" "$componentTemplate" "$componentFile"

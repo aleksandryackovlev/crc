@@ -4,17 +4,17 @@ import React, { Component } from 'react';
 %CSS_IMPORT%
 
 class %COMPONENT_NAME% extends Component {
-%INDENTATION%%HANDLERS%
-%INDENTATION%%METHODS%
-%INDENTATION%%LIFECYCLE_METHODS%
-%INDENTATION%render() {
-%INDENTATION%const %PROPS% = this.props;
-%INDENTATION%%INDENTATION%return (
-%INDENTATION%%INDENTATION%%INDENTATION%<div>
+	%HANDLERS%
+	%METHODS%
+	%LIFECYCLE_METHODS%
+	render() {
+	const %PROPS% = this.props;
+		return (
+			<div>
 
-%INDENTATION%%INDENTATION%%INDENTATION%</div>
-%INDENTATION%%INDENTATION%);
-%INDENTATION%}
+			</div>
+		);
+	}
 }
 
 %PROP_TYPES_DEFINITION%
