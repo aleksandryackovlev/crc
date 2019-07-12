@@ -72,6 +72,12 @@ teardown() {
   [ "$output" = 's/%COMPONENT_NAME%/SomeComponent/g' ]
 }
 
+@test "[crc-create] replaceIndentation: should return the sed command for the indentation replacement" {
+  run replaceIndentation '  '
+
+  [ "$output" = 's/%INDENTATION%/  /g' ]
+}
+
 @test "[crc-create] createComponentFile: should create a new component file for a given component name" {
   echo "%COMPONENT_NAME%" > component1.ts
 

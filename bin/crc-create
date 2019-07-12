@@ -80,6 +80,12 @@ replaceComponentName() {
   echo "s/%COMPONENT_NAME%/$1/g"
 }
 
+# DESCRIPTION: Return a sed command for indentation replacement
+# USAGE: replaceComponentName
+replaceIndentation() {
+  echo "s/%INDENTATION%/$1/g"
+}
+
 # DESCRIPTION: Create the component file
 # USAGE: createComponentFile ARGUMENTS
 createComponentFile() {
@@ -452,6 +458,7 @@ crc-create() {
   stylesFile="$directory"/"$stylesFile"
 
   sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss" "$stylesFileExtention")"
+  sedCommands="$sedCommands""; $(replaceIndentation "$indentation")"
   sedCommands="$sedCommands""; $(addLifecycleMethods "$indentation" "$lifecycleMethods"); $(addHandlers "$indentation" "$handlers")"
   sedCommands="$sedCommands""; $(addMethods "$indentation" "$methods"); $(addProps "$indentation" "$componentName" "$@")"
 

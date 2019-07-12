@@ -4,9 +4,9 @@ import React from 'react';
 %CSS_IMPORT%
 
 const %COMPONENT_NAME% = (%PROPS%) => (
-  <div>
+%INDENTATION%<div>
 
-  </div>
+%INDENTATION%</div>
 );
 
 %PROP_TYPES_DEFINITION%
