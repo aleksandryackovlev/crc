@@ -21,7 +21,7 @@ If a placeholder for an option is not defined in a template, it will not appear 
 &nbsp;&nbsp;&nbsp;&nbsp; Create a component from the template with the name <TEMPLATE>. By default it is set to the "default" template.
 
 **-d < DIRECTORY >**  
-&nbsp;&nbsp;&nbsp;&nbsp; Create a component in the <DIRECTORY>. By default it is set to the current working directory.
+&nbsp;&nbsp;&nbsp;&nbsp; Create a component in the < DIRECTORY >. By default it is set to the current working directory.
 
 **-l < LIFECYCLE_METHODS >**  
 &nbsp;&nbsp;&nbsp;&nbsp; Add a given list of lifecycle methods. Methods should be given as a string that consits of method names separated by colons.
