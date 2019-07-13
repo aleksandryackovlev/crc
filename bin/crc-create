@@ -323,14 +323,14 @@ addProps() {
     esac
 
     if [[ -z $propsOutput && -n $prop ]]; then
-      propsOutput="$propsOutput\{\n"
+      propsOutput="$propsOutput\1\2\{\n"
     fi
 
     if [[ -z $propTypesOutput ]]; then
       propTypesOutput="$propTypesOutput""$componentName.propTypes = \{\n"
     fi
 
-    propsOutput="$propsOutput${indentation}$prop,\n"
+    propsOutput="$propsOutput\1${indentation}$prop,\n"
     propTypesOutput="$propTypesOutput${indentation}$prop: PropTypes.$propType"
 
     if [[ -z $defaultProp ]]; then
@@ -345,10 +345,10 @@ addProps() {
   done
 
   if [[ -n $propsOutput ]]; then
-    propsOutput="${propsOutput}\}"
+    propsOutput="${propsOutput}\1\}"
     propTypesOutput="${propTypesOutput}\};\n"
 
-    output="s/$(crc-env propsPlaceholder)/$propsOutput/g; "
+    output="s/^\(${indentation}*\)\(.*\)$(crc-env propsPlaceholder)/$propsOutput/g; "
     output="${output}s/$(crc-env propTypesImportPlaceholder)/import PropTypes from 'prop-types';/g; "
     output="${output}s/$(crc-env propTypesDefinitionPlaceholder)/$propTypesOutput/g; "
 

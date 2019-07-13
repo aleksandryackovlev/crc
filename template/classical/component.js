@@ -8,7 +8,8 @@ class %COMPONENT_NAME% extends Component {
 	%METHODS%
 	%LIFECYCLE_METHODS%
 	render() {
-	const %PROPS% = this.props;
+		const %PROPS% = this.props;
+
 		return (
 			<div>
 

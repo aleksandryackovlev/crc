@@ -2,6 +2,7 @@
 source ./crc-create
 
 setup() {
+  templateDirectory=../template
   if [[ ! -f $globalConfigFile ]]; then
     cp ../"$configFileName" "$globalConfigFile"
   fi
@@ -14,6 +15,9 @@ teardown() {
 
   if [[ -d SomeComponent ]]; then
     rm -rf SomeComponent
+    rm -rf /tmp/SomeComponent
+    rm -f '/tmp/SomeComponent.js'
+    rm -rf /tmp/Component
   fi
 }
 
@@ -209,6 +213,57 @@ teardown() {
 @test "[crc-create] addProps: should add given prop types to a new component" {
   run addProps '  ' SomeComponent "value:number" "text:object:'shell'"
 
-  expectedOutput='s/%PROPS%/\{\n  value,\n  text,\n\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
+  expectedOutput='s/^\(  *\)\(.*\)%PROPS%/\1\2\{\n\1  value,\n\1  text,\n\1\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
   [ "$output" = "$expectedOutput" ]
+}
+
+@test "[crc-create] crc-create: should throw an error if a component name is not given" {
+  run crc-create
+
+  [ "$status" -eq 2 ]
+}
+
+@test "[crc-create] crc-create: should throw an error if a directory for a new component doesn't exist" {
+  run crc-create -d /abracadabra SomeComponent
+
+  [ "$status" -eq 2 ]
+}
+
+@test "[crc-create] crc-create: should throw an error if a component name contains invalid characters" {
+  run crc-create "some component"
+
+  [ "$status" -eq 2 ]
+}
+
+@test "[crc-create] crc-create: should throw an error if the template directory doesn't exist" {
+  run crc-create -t notExist someComponent
+
+  [ "$status" -eq 2 ]
+}
+
+@test "[crc-create] crc-create: create a file component if the -f options is given" {
+  run crc-create -f -s -d /tmp SomeComponent
+
+  snapDiff=$(diff /tmp/SomeComponent.js ../test_snapshots/FileComponent.js)
+
+  [ -f /tmp/SomeComponent.js ]
+  [ -z "$snapDiff" ]
+
+  rm -f /tmp/SomeComponent.js
+}
+
+@test "[crc-create] crc-create: create a react component with specified options" {
+  run crc-create -s -l componentDidMount:componentWillUnmount -d /tmp -h handleClick -m getValues:setValues -t classical Component "value:string:'test'" 'source:object'
+
+  componentDiff=$(diff /tmp/Component/Component.js ../test_snapshots/Component.js)
+  indexDiff=$(diff /tmp/Component/index.js ../test_snapshots/index.js)
+  stylesDiff=$(diff /tmp/Component/index.css ../test_snapshots/index.css)
+
+
+  [ -d /tmp/Component ]
+  [ -z "$componentDiff" ]
+  [ -z "$indexDiff" ]
+  [ -z "$stylesDiff" ]
+
+  rm -rf /tmp/Component
 }
