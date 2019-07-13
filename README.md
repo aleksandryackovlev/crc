@@ -1,5 +1,5 @@
  # CRC - Create React Component
-[![Build Status](https://travis-ci.org/aleksandryackovlev/crc.svg?branch=master)](https://travis-ci.org/aleksandryackovlev/crc)
+[![Build Status](https://travis-ci.org/aleksandryackovlev/crc.svg?branch=master)](https://travis-ci.org/aleksandryackovlev/crc) ![GitHub](https://img.shields.io/github/license/aleksandryackovlev/crc.svg)  
 An easy to use cli-tool that simplifies the process of creation of React components.
 
 ## crc create
