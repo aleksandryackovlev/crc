@@ -1,7 +1,8 @@
  # CRC - Create React Component
 [![Build Status](https://travis-ci.org/aleksandryackovlev/crc.svg?branch=master)](https://travis-ci.org/aleksandryackovlev/crc) ![GitHub release](https://img.shields.io/github/release/aleksandryackovlev/crc.svg) ![GitHub](https://img.shields.io/github/license/aleksandryackovlev/crc.svg)  
 An easy to use cli-tool that simplifies the process of creation of React components.
-
+  
+  
 ## crc create
 Create React component
 ### Synopsis
@@ -72,7 +73,8 @@ Create the SomeComponent component with a given list of handlers:
 ```shell
 $ crc create -m "handleChange:handleClick" SomeComponent
 ```
-
+  
+  
 ## crc config
 Create, edit or delete local crc config files for different directories
 
@@ -108,6 +110,8 @@ Delete the active config file if it exists:
 ```shell
 $ crc config delete 
 ```
+  
+  
 ## crc template
 Create, read, update or delete templates
 
@@ -120,7 +124,7 @@ The command handles template files. Template files are going to be edited in the
 
 ### Commands
 **create < TEMPLATE >**  
-&nbsp;&nbsp;&nbsp;&nbsp; Create a new template with the name < TEMPLATE >.
+&nbsp;&nbsp;&nbsp;&nbsp; Create a new template with the name < TEMPLATE >.  
 &nbsp;&nbsp;&nbsp;&nbsp;**Options:**  
 &nbsp;&nbsp;&nbsp;&nbsp;**-n**  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a template without opening its files in the EDITOR.
@@ -152,8 +156,8 @@ Delete the "some_template":
 ```shell
 $ crc config template delete some_template 
 ```
-
-
+  
+  
 ## crc help
 Show help info
 
@@ -161,8 +165,6 @@ Show help info
 ```shell
 crc help [<COMMAND>]
 ```
-
-
 ### Examples
 Show version:
 ```shell
