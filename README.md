@@ -10,13 +10,13 @@ crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>] [ -l <LIFECYCLE_METHODS>]
     [-h <HANDLERS>] [-m <METHODS>] <COMPONENT_NAME> [<PROPS>]
 ```
 ### Description
-If a placeholder for an option is not defined in a template, it will not appear in the resulting file even if it is set in the command.
+If the placeholder for an option is not defined in a template, this option will not appear in the resulting file even if it is set in the command.
 ### Options
 **-f**  
 &nbsp;&nbsp;&nbsp;&nbsp; Create a file component.
 
 **-s**  
-&nbsp;&nbsp;&nbsp;&nbsp; Add styles to a new component.
+&nbsp;&nbsp;&nbsp;&nbsp; Add styles to a new component. This option is ignored if -f options is set.
 
 **-t < TEMPLATE >**  
 &nbsp;&nbsp;&nbsp;&nbsp; Create a component from the template with the name < TEMPLATE >. By default it is set to the "default" template.
@@ -78,20 +78,20 @@ Create, edit or delete local crc config files for different directories
 
 ### Synopsis
 ```shell
-crc config < COMMAND >
+crc config <COMMAND> [<ARGUMENTS>]
 ```
 ### Description
-The command handles local config files. If there is no config file in PWD, it is going to be looked for in ancestor directories. The first file, that is found in a list of ancestor directories, is considered as an active local config. Config files are going to be edited in the default EDITOR.
+The command handles local config files. If there is no config file in PWD, it is going to be looked for in ancestor directories. The first file, that is found in a list of ancestor directories, is considered as the active local config. Config files are going to be edited in the default EDITOR.
 
 ### Commands
 **create [< DIRECTORY >]**  
 &nbsp;&nbsp;&nbsp;&nbsp; Create a local config file component. By default < DIRECTORY > is set to PWD
 
 **edit**  
-&nbsp;&nbsp;&nbsp;&nbsp; Edit a local config file component if it exits.
+&nbsp;&nbsp;&nbsp;&nbsp; Edit the active local config file component if it exits.
 
 **delete**  
-&nbsp;&nbsp;&nbsp;&nbsp; Delete a local config file component if it exits.
+&nbsp;&nbsp;&nbsp;&nbsp; Delete the active local config file component if it exits.
 
 ### Examples
 Create a config file in a current directory:
@@ -111,11 +111,46 @@ $ crc config delete
 ### crc template
 Create, read, update or delete templates
 
+### Synopsis
 ```shell
-crc template list
-crc template create templateName
-crc template edit templateName
-crc template delete templateName
+crc read <COMMAND> [-n] [-j <JS_FILE_EXTENTION>] [-s <CSS_FILE_EXTENTION>] <TEMPLATE>
+```
+### Description
+The command handles template files. Template files are going to be edited in the default EDITOR.
+
+### Commands
+**create < TEMPLATE >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Create a new template with the name < TEMPLATE >.
+&nbsp;&nbsp;&nbsp;&nbsp;**Options:**  
+&nbsp;&nbsp;&nbsp;&nbsp;**-n**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Create a template without opening its files in the EDITOR.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-j < JS_FILE_EXTENTION >**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set the extention of a component template. By default it is set to "js".
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-s < CSS_FILE_EXTENTION >**  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set the extention of a styles template. By default it is set to "css".
+
+**edit < TEMPLATE >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Edit files for the < TEMPLATE > if this template exits.
+
+**delete < TEMPLATE >**  
+&nbsp;&nbsp;&nbsp;&nbsp; Delete the < TEMPLATE > if this template exits.
+
+### Examples
+Create a new template:
+```shell
+$ crc template -j jsx -s sass create some_template
+```
+
+Edit the "some_template":
+```shell
+$ crc template edit some_template
+```
+
+Delete the "some_template":
+```shell
+$ crc config template delete some_template 
 ```
 
 
