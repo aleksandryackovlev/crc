@@ -299,7 +299,7 @@ addProps() {
   componentName="$1"
   shift
 
-  output="/$(crc-env propTypesImportPlaceholder)/d; s/$(crc-env propsPlaceholder)//g; /$(crc-env propTypesDefinitionPlaceholder)/d; /$(crc-env defaultPropsPlaceholder)/d"
+  output="/$(crc-env propTypesImportPlaceholder)/d; /$(crc-env propsPlaceholder).* = this\.props/d; s/$(crc-env propsPlaceholder)//g; /$(crc-env propTypesDefinitionPlaceholder)/d; /$(crc-env defaultPropsPlaceholder)/d"
 
   if [[ $# -eq 0 || -z $componentName ]]; then
     echo "$output"

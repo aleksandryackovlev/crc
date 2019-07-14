@@ -207,7 +207,7 @@ teardown() {
 @test "[crc-create] addProps: should delete all props' replacements if props were not given" {
   run addProps '  ' SomeComponent
 
-  [ "$output" = '/%PROP_TYPES_IMPORT%/d; s/%PROPS%//g; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d' ]
+  [ "$output" = '/%PROP_TYPES_IMPORT%/d; /%PROPS%.* = this\.props/d; s/%PROPS%//g; /%PROP_TYPES_DEFINITION%/d; /%DEFAULT_PROPS%/d' ]
 }
 
 @test "[crc-create] addProps: should add given prop types to a new component" {
