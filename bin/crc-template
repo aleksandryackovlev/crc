@@ -8,4 +8,91 @@
 
 [[ $crcTemplateLoaded ]] && return
 
+source crc-env
+source crc-utils
+
+# DESCRIPTION: Creates a local config file
+# USAGE: createConfigFile [DIRECTORY]
+createTemplate() {
+  local template
+  local currentEditor
+  local templateDir
+
+  template="$1"
+
+  templateDir="$(crc-env templateDirectory)/$template"
+
+  if [[ -d $templateDir ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "The template $template already exists"
+  fi
+
+  cp -r -- "$(crc-env templateDirectory)/classical" "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+
+  currentEditor="$(crc-utils getEditor)"
+
+  "$currentEditor" "$templateDir/component.js"
+  "$currentEditor" "$templateDir/styles.css"
+  echo "Template has been created"
+}
+
+editTemplate() {
+  local template
+  local currentEditor
+  local templateDir
+
+  template="$1"
+
+  templateDir="$(crc-env templateDirectory)/$template"
+
+  if [[ ! -d $templateDir ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "The template $template doesn't exist"
+  fi
+
+  currentEditor="$(crc-utils getEditor)"
+
+  "$currentEditor" "$templateDir/component.js"
+  "$currentEditor" "$templateDir/styles.css"
+
+  echo "Template has been edited"
+}
+
+deleteTemplate() {
+  local template
+  local templateDir
+
+  template="$1"
+  templateDir="$(crc-env templateDirectory)/$template"
+
+  case $template in
+    default|classical)
+      crc-utils die "$(crc-env generalErrorCode)" "System templates cannot be deleted"
+      ;;
+  esac
+
+  rm -rf "$templateDir" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be deleted"
+
+  echo "Template has been deleted"
+}
+
+crc-template() {
+  local commandToExec
+  commandToExec="$1"
+  shift
+
+  case $commandToExec in
+    create)
+        createTemplate "$@"
+      ;;
+    edit)
+        editTemplate "$@"
+      ;;
+    delete)
+        deleteTemplate "$@"
+      ;;
+    *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-template ""$commandToExec"
+      ;;
+  esac
+}
+
 crcTemplateLoaded=1
