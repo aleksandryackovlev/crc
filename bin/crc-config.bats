@@ -39,19 +39,6 @@ teardown() {
   [ "$output" = "$configFile" ]
 }
 
-# getEditor test cases
-@test "[crc-config] getEditor: should return an editor if it is set" {
-  EDITOR=vim
-  run getEditor
-  [ "$output" = vim ]
-}
-
-@test "[crc-config] getEditor: should return vi as a default editor if it is not set" {
-  EDITOR=
-  run getEditor
-  [ "$output" = vi ]
-}
-
 # editConfigFile
 @test "[crc-config] editConfigFile: should open a config file in a default editor" {
   EDITOR=echo

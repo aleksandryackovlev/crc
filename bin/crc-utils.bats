@@ -31,6 +31,18 @@ csi="$esc["
   [ -z "$output" ]
 }
 
+# getEditor test cases
+@test "[crc-utils] getEditor: should return an editor if it is set" {
+  EDITOR=vim
+  run getEditor
+  [ "$output" = vim ]
+}
+
+@test "[crc-utils] getEditor: should return vi as a default editor if it is not set" {
+  EDITOR=
+  run getEditor
+  [ "$output" = vi ]
+}
 
 # crc-utils test cases
 @test "[crc-utils] crc-utils die: should proxy its arguments to the die function" {

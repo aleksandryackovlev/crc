@@ -59,20 +59,6 @@ readConfig() {
   readLocalConfig
 }
 
-# DESCRIPTION: Returns the active editor
-# USAGE: getEditor
-getEditor() {
-  local currentEditor
-
-  if [[ $EDITOR ]]; then 
-    currentEditor="$EDITOR"
-  else
-    currentEditor=vi
-  fi
-
-  printf "%s" "$currentEditor"
-}
-
 # DESCRIPTION: Edits a local config file
 # USAGE: editConfigFile
 editConfigFile() {
@@ -80,7 +66,7 @@ editConfigFile() {
   local currentEditor
 
   localConfigFile="$(findLocalConfig)"
-  currentEditor="$(getEditor)"
+  currentEditor="$(crc-utils getEditor)"
 
   if [[ -z $localConfigFile ]]; then
     crc-utils die "$(crc-env generalErrorCode)" "A local config file doesn't exist"
@@ -108,7 +94,7 @@ createConfigFile() {
     crc-utils die "$(crc-env generalErrorCode)" "A file $localConfigFile already exists"
   fi
 
-  currentEditor="$(getEditor)"
+  currentEditor="$(crc-utils getEditor)"
 
   printf "createFileComponent=0\ncomponentType=functional\nfileExtention=js\naddCss=0\ntemplate=default" > "$localConfigFile"
 

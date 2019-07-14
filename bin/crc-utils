@@ -32,6 +32,21 @@ die() {
   exit "$error"
 }
 
+
+# DESCRIPTION: Returns the active editor
+# USAGE: getEditor
+getEditor() {
+  local currentEditor
+
+  if [[ $EDITOR ]]; then 
+    currentEditor="$EDITOR"
+  else
+    currentEditor=vi
+  fi
+
+  printf "%s" "$currentEditor"
+}
+
 # DESCRIPTION: The entry point for the utils functions
 # USAGE: crc-utils [COMMAND] [ARGUMENTS]
 crc-utils() {
@@ -42,6 +57,9 @@ crc-utils() {
   case $commandToExec in
     die)
         die "$@"
+      ;;
+    getEditor)
+        getEditor "$@"
       ;;
     *)
         die "$(crc-env misuseErrorCode)" "An unknown command crc-utils ""$commandToExec"
