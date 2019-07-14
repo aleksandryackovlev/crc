@@ -11,12 +11,50 @@
 source crc-env
 source crc-utils
 
-# DESCRIPTION: Creates a local config file
-# USAGE: createConfigFile [DIRECTORY]
+# DESCRIPTION: Creates a template directory
+# USAGE: createTemplate [-n] [-j JS_FILE_EXTENTION] [-s CSS_FILE_EXTENTION] TEMPLATE
 createTemplate() {
   local template
   local currentEditor
   local templateDir
+  local componentExtention
+  local stylesExtention
+  local shouldEdit
+
+  shouldEdit=1
+  componentExtention=js
+  stylesExtention=css
+
+  ## Options
+  opts=j:s:n
+  OPTIND=1
+
+  while getopts $opts opt; do
+    case $opt in
+      -j)
+        case $OPTARG in
+          js|jsx|ts)
+            componentExtention="$OPTARG"
+            ;;
+        esac
+        ;;
+      -j)
+        case $OPTARG in
+          css|styl|sass|less)
+            stylesExtention="$OPTARG"
+            ;;
+        esac
+        ;;
+      n)
+        shouldEdit=0
+        ;;
+      *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options was given"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
 
   template="$1"
 
@@ -26,7 +64,44 @@ createTemplate() {
     crc-utils die "$(crc-env generalErrorCode)" "The template $template already exists"
   fi
 
-  cp -r -- "$(crc-env templateDirectory)/classical" "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  mkdir "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  touch "$templateDir"/component."$componentExtention" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  touch "$templateDir"/styles."$stylesExtention" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+
+  if [[ $shouldEdit -eq 1 ]]; then
+    currentEditor="$(crc-utils getEditor)"
+
+    "$currentEditor" "$templateDir/component.$componentExtention"
+    "$currentEditor" "$templateDir/styles.$stylesExtention"
+  fi
+
+  echo "Template has been created"
+}
+
+# DESCRIPTION: Copy a template
+# USAGE: copyTemplate OLD_TEMPLATE NEW_TEMPLATE
+copyTemplate() {
+  local existingTemplate
+  local template
+  local currentEditor
+  local templateDir
+  local existingTemplateDir
+
+  existingTemplate="$1"
+  template="$2"
+
+  existingTemplateDir="$(crc-env templateDirectory)/$existingTemplate"
+  templateDir="$(crc-env templateDirectory)/$template"
+
+  if [[ -d $templateDir ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "The template $template already exists"
+  fi
+
+  if [[ ! -d $existingTemplateDir ]]; then
+    crc-utils die "$(crc-env generalErrorCode)" "The template $existingTemplateDir doesn't exist"
+  fi
+
+  cp -r -- "$existingTemplateDir" "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
 
   currentEditor="$(crc-utils getEditor)"
 
@@ -35,6 +110,8 @@ createTemplate() {
   echo "Template has been created"
 }
 
+# DESCRIPTION: Edit a template
+# USAGE: editTemplate TEMPLATE
 editTemplate() {
   local template
   local currentEditor
@@ -56,6 +133,8 @@ editTemplate() {
   echo "Template has been edited"
 }
 
+# DESCRIPTION: Delete a template
+# USAGE: deleteTemplate TEMPLATE
 deleteTemplate() {
   local template
   local templateDir
@@ -74,6 +153,14 @@ deleteTemplate() {
   echo "Template has been deleted"
 }
 
+# DESCRIPTION: List all templates
+# USAGE: listTemplates
+listTemplates() {
+  printf "%s\n" "$(crc-env templateDirectory)"/*
+}
+
+# DESCRIPTION: The entry point for the template functions
+# USAGE: crc-template [COMMAND] [ARGUMENTS]
 crc-template() {
   local commandToExec
   commandToExec="$1"
@@ -83,11 +170,17 @@ crc-template() {
     create)
         createTemplate "$@"
       ;;
+    copy)
+        copyTemplate "$@"
+      ;;
     edit)
         editTemplate "$@"
       ;;
     delete)
         deleteTemplate "$@"
+      ;;
+    list)
+        listTemplates "$@"
       ;;
     *)
         crc-utils die "$(crc-env misuseErrorCode)" "An unknown command crc-template ""$commandToExec"
