@@ -78,7 +78,7 @@ Create, edit or delete local crc config files for different directories
 
 ### Synopsis
 ```shell
-crc config <COMMAND> [<ARGUMENTS>]
+crc config <COMMAND> [<DIRECTORY>]
 ```
 ### Description
 The command handles local config files. If there is no config file in PWD, it is going to be looked for in ancestor directories. The first file, that is found in a list of ancestor directories, is considered as the active local config. Config files are going to be edited in the default EDITOR.
@@ -108,7 +108,7 @@ Delete the active config file if it exists:
 ```shell
 $ crc config delete 
 ```
-### crc template
+## crc template
 Create, read, update or delete templates
 
 ### Synopsis
@@ -154,11 +154,27 @@ $ crc config template delete some_template
 ```
 
 
-### crc help
+## crc help
 Show help info
 
+### Synopsis
 ```shell
-crc help
-crc help usage
-crc help version
+crc help [<COMMAND>]
+```
+
+
+### Examples
+Show version:
+```shell
+$ crc help version
+```
+
+Show usage info:
+```shell
+$ crc help usage
+```
+
+Show help info on the crc-create command:
+```shell
+$ crc help create 
 ```
