@@ -63,6 +63,12 @@ teardown() {
   rm -rf "$templateDirectory/copiedTemplate"
 }
 
+@test "[crc-template] editTemplate: should throw an error if the template doesn't exitst" {
+  run editTemplate unknown
+
+  [ "$status" -eq 1 ]
+}
+
 @test "[crc-template] listTemplates: should show a list of all available templates" {
   templateDirectory="$(dirname "$PWD")/template"
 

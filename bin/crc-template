@@ -149,8 +149,11 @@ editTemplate() {
 
   currentEditor="$(crc-utils getEditor)"
 
-  "$currentEditor" "$templateDir/component.js"
-  "$currentEditor" "$templateDir/styles.css"
+  for file in "$templateDir"/* ; do
+    if [[ -f $file ]]; then
+      "$currentEditor" "$file"
+    fi
+  done;
 
   echo "Template has been edited"
 }
