@@ -69,6 +69,24 @@ teardown() {
   [ "$status" -eq 1 ]
 }
 
+@test "[crc-template] deleteTemplate: should not allow to delete system templates" {
+  run deleteTemplate default
+
+  [ "$status" -eq 1 ]
+}
+
+@test "[crc-template] deleteTemplate: should delete a template" {
+  templateDirectory="$(dirname "$PWD")/template"
+
+  copyTemplate -n default toDeleteTemplate
+
+  [ -d "$templateDirectory/toDeleteTemplate" ]
+
+  run deleteTemplate toDeleteTemplate
+
+  [ ! -d "$templateDirectory/toDeleteTemplate" ]
+}
+
 @test "[crc-template] listTemplates: should show a list of all available templates" {
   templateDirectory="$(dirname "$PWD")/template"
 
