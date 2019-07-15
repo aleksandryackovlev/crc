@@ -194,7 +194,7 @@ HELP
 
 # DESCRIPTION: Print the help information on the crc-template command
 # USAGE: showTemplateHelp
-showConfigHelp() {
+showTemplateHelp() {
   printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
   cat <<- HELP
 
@@ -277,7 +277,7 @@ crc-help() {
         showCreateHelp | less
       ;;
     template)
-        echo 'template help info'
+        showTemplateHelp | less
       ;;
     config)
         showConfigHelp | less
