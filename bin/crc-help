@@ -40,7 +40,6 @@ NAME
 SYNOPSIS
         crc create [-f] [-s] [-t <TEMPLATE>] [-d <DIRECTORY>] [ -l <LIFECYCLE_METHODS>]
                 [-h <HANDLERS>] [-m <METHODS>] <COMPONENT_NAME> [<PROPS>]
-        crc create -i
 
 DESCRIPTION
         If a place for an option is not defined in a template, it will not appear in the resulting
@@ -48,8 +47,6 @@ DESCRIPTION
 
         If -f (create a one-file component) and -s (add styles) are given, the -s option will be
         ignored.
-
-        If -i (interactive) is given, other parameters except <COMPONENT_NAME> will be ignored.
 
 OPTIONS
         -f
@@ -77,10 +74,6 @@ OPTIONS
         -m <METHODS>
             Add a given list of methods.
             Handlers should be given as a string that consits of their names separated by colons.
-
-        -i
-            Create a component interactively.
-            If this option is given, all other parameters except <COMPONENT_NAME> will be ignored.
 
         <COMPONENT_NAME>
             The name of a component that should be created written in camelcase.
@@ -153,7 +146,7 @@ showConfigHelp() {
   cat <<- HELP
 
 NAME
-        crc-config - Ceate React components
+        crc-config - Create, edit or delete config files
 
 SYNOPSIS
         crc config <COMMAND>
@@ -194,7 +187,68 @@ EXAMPLES
               $ crc config delete 
 
 SEE ALSO
-        crc-template, crc-create
+        crc-create, crc-template
+
+HELP
+}
+
+# DESCRIPTION: Print the help information on the crc-template command
+# USAGE: showTemplateHelp
+showConfigHelp() {
+  printf "%s - %s\n" "$(crc-env scriptName)" "$(crc-env description)"
+  cat <<- HELP
+
+NAME
+        crc-template - Create, read, update or delete templates
+
+SYNOPSIS
+        crc template <COMMAND> [-n] [-j <JS_FILE_EXTENTION>] [-s <CSS_FILE_EXTENTION>] <TEMPLATE>
+
+DESCRIPTION
+        The command handles template files.
+
+        Template files are going to be edited in the default EDITOR.
+
+COMMANDS
+        create <TEMPLATE>
+            Create a new template with the name <TEMPLATE>.
+
+            Options:
+                -n
+                    Create a template without opening its files in the EDITOR.
+
+                -j <JS_FILE_EXTENTION>
+                    Set the extention of a component template. By default it is set to "js".
+
+                -s <CSS_FILE_EXTENTION>
+                    Set the extention of a styles template. By default it is set to "css".
+
+        copy <OLD_TEMPLATE> <NEW_TEMPLATE>
+            Copy files from the <OLD_TEMPLATE> to <NEW_TEMPLATE>.
+
+        edit <TEMPLATE>
+            Edit files for the <TEMPLATE> if this template exits.
+
+        delete <TEMPLATE>
+            Delete the <TEMPLATE> if this template exits.
+
+EXAMPLES
+        Create a new template:
+
+            $ crc template -j jsx -s sass create some_template
+
+
+        Edit the "some_template":
+
+            $ crc template edit some_template
+
+
+        Delete the "some_template":
+
+            $ crc config template delete some_template 
+
+SEE ALSO
+        crc-create, crc-config
 
 HELP
 }

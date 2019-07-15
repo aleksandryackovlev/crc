@@ -125,7 +125,7 @@ Create, read, update or delete templates
 
 ### Synopsis
 ```shell
-crc read <COMMAND> [-n] [-j <JS_FILE_EXTENTION>] [-s <CSS_FILE_EXTENTION>] <TEMPLATE>
+crc template <COMMAND> [-n] [-j <JS_FILE_EXTENTION>] [-s <CSS_FILE_EXTENTION>] <TEMPLATE>
 ```
 ### Description
 The command handles template files. Template files are going to be edited in the default EDITOR.
@@ -144,7 +144,7 @@ The command handles template files. Template files are going to be edited in the
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Set the extention of a styles template. By default it is set to "css".
 
 `copy <OLD_TEMPLATE> <NEW_TEMPLATE>`  
-&nbsp;&nbsp;&nbsp;&nbsp; Copy files from the `<OLD_TEMPLATE>`to `<NEW_TEMPLATE>`.
+&nbsp;&nbsp;&nbsp;&nbsp; Copy files from the `<OLD_TEMPLATE>` to `<NEW_TEMPLATE>`.
 
 `edit <TEMPLATE>`  
 &nbsp;&nbsp;&nbsp;&nbsp; Edit files for the `<TEMPLATE>` if this template exits.
