@@ -62,3 +62,12 @@ teardown() {
 
   rm -rf "$templateDirectory/copiedTemplate"
 }
+
+@test "[crc-template] listTemplates: should show a list of all available templates" {
+  templateDirectory="$(dirname "$PWD")/template"
+
+  run listTemplates
+
+  [ "${lines[0]}" = classical ]
+  [ "${lines[1]}" = default ]
+}

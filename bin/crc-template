@@ -178,7 +178,11 @@ deleteTemplate() {
 # DESCRIPTION: List all templates
 # USAGE: listTemplates
 listTemplates() {
-  printf "%s\n" "$(crc-env templateDirectory)"/*
+  for template in "$(crc-env templateDirectory)"/* ; do
+    if [[ -d $template ]]; then
+      printf "%s\n" "${template##*/}"
+    fi
+  done
 }
 
 # DESCRIPTION: The entry point for the template functions
