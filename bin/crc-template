@@ -31,19 +31,15 @@ createTemplate() {
 
   while getopts $opts opt; do
     case $opt in
-      -j)
-        case $OPTARG in
-          js|jsx|ts)
-            componentExtention="$OPTARG"
-            ;;
-        esac
+      j)
+        if [[ $OPTARG = js || $OPTARG = jsx || $OPTARG = ts ]]; then
+          componentExtention="$OPTARG"
+        fi
         ;;
-      -j)
-        case $OPTARG in
-          css|styl|sass|less)
-            stylesExtention="$OPTARG"
-            ;;
-        esac
+      s)
+        if [[ $OPTARG = css || $OPTARG = styl || $OPTARG = sass || $OPTARG = less ]]; then
+          stylesExtention="$OPTARG"
+        fi
         ;;
       n)
         shouldEdit=0
@@ -64,9 +60,9 @@ createTemplate() {
     crc-utils die "$(crc-env generalErrorCode)" "The template $template already exists"
   fi
 
-  mkdir "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
-  touch "$templateDir"/component."$componentExtention" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
-  touch "$templateDir"/styles."$stylesExtention" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  mkdir "$templateDir" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  touch "$templateDir"/component."$componentExtention" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  touch "$templateDir"/styles."$stylesExtention" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
 
   if [[ $shouldEdit -eq 1 ]]; then
     currentEditor="$(crc-utils getEditor)"
@@ -101,7 +97,7 @@ copyTemplate() {
     crc-utils die "$(crc-env generalErrorCode)" "The template $existingTemplateDir doesn't exist"
   fi
 
-  cp -r -- "$existingTemplateDir" "$templateDir" || $(crc-env) crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
+  cp -r -- "$existingTemplateDir" "$templateDir" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
 
   currentEditor="$(crc-utils getEditor)"
 
