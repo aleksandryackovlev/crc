@@ -82,6 +82,26 @@ copyTemplate() {
   local currentEditor
   local templateDir
   local existingTemplateDir
+  local shouldEdit
+
+  shouldEdit=1
+
+  ## Options
+  opts=n
+  OPTIND=1
+
+  while getopts $opts opt; do
+    case $opt in
+      n)
+        shouldEdit=0
+        ;;
+      *)
+        crc-utils die "$(crc-env misuseErrorCode)" "An unknown options was given"
+        ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
 
   existingTemplate="$1"
   template="$2"
@@ -99,10 +119,16 @@ copyTemplate() {
 
   cp -r -- "$existingTemplateDir" "$templateDir" || crc-utils die "$(crc-env generalErrorCode)" "The template cannot be created"
 
-  currentEditor="$(crc-utils getEditor)"
+  if [[ $shouldEdit -eq 1 ]]; then
+    currentEditor="$(crc-utils getEditor)"
 
-  "$currentEditor" "$templateDir/component.js"
-  "$currentEditor" "$templateDir/styles.css"
+    for file in "$templateDir"/* ; do
+      if [[ -f $file ]]; then
+        "$currentEditor" "$file"
+      fi
+    done;
+  fi
+
   echo "Template has been created"
 }
 
