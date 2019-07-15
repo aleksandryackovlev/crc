@@ -3,6 +3,14 @@
 An easy to use cli-tool that simplifies the process of creation of React components.
   
   
+## Installation
+```shell
+$ git clone https://github.com/aleksandryackovlev/crc.git
+$ cd crc
+$ make install
+```
+  
+   
 ## crc create
 Create React component
 ### Synopsis
