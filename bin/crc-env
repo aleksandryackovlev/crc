@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 #: TITLE: crc-env
-#: DATE: 2019-04-23
-#: VERSION: 0.1.0
+#: DATE: 2019-07-20
+#: VERSION: 0.1.1
 #: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: DESCRIPTION: Environment variables
 
@@ -38,7 +38,7 @@ export defaultIndentation='  '
 ## Placeholders
 export cssImportPlaceholder='%CSS_IMPORT%'
 export componentNamePlaceholder='%COMPONENT_NAME%'
-export indentationPlaceholder='	'
+export indentationPlaceholder="\t"
 export lifecycleMethodsPlaceholder='%LIFECYCLE_METHODS%'
 export handlersPlaceholder='%HANDLERS%'
 export methodsPlaceholder='%METHODS%'
