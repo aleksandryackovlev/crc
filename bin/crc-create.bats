@@ -79,7 +79,7 @@ teardown() {
 @test "[crc-create] replaceIndentation: should return the sed command for the indentation replacement" {
   run replaceIndentation '  '
 
-  [ "$output" = 's/	/  /g' ]
+  [ "$output" = 's/\t/  /g' ]
 }
 
 @test "[crc-create] createComponentFile: should create a new component file for a given component name" {
@@ -213,7 +213,7 @@ teardown() {
 @test "[crc-create] addProps: should add given prop types to a new component" {
   run addProps '  ' SomeComponent "value:number" "text:object:'shell'"
 
-  expectedOutput='s/^\(  *\)\(.*\)%PROPS%/\1\2\{\n\1  value,\n\1  text,\n\1\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
+  expectedOutput='s/^\(\t*\)\(.*\)%PROPS%/\1\2\{\n\1  value,\n\1  text,\n\1\}/g; s/%PROP_TYPES_IMPORT%/import PropTypes from '"'prop-types'"';/g; s/%PROP_TYPES_DEFINITION%/SomeComponent.propTypes = \{\n  value: PropTypes.number.isRequired,\n  text: PropTypes.object,\n\};\n/g; s/%DEFAULT_PROPS%/SomeComponent.defaultProps = \{\n  text: '"'shell'"',\n\};\n/g'
   [ "$output" = "$expectedOutput" ]
 }
 
@@ -253,6 +253,7 @@ teardown() {
 }
 
 @test "[crc-create] crc-create: create a react component with specified options" {
+  rm -rf /tmp/Component
   run crc-create -s -l componentDidMount:componentWillUnmount -d /tmp -h handleClick -m getValues:setValues -t classical Component "value:string:'test'" 'source:object'
 
   componentDiff=$(diff /tmp/Component/Component.js ../test_snapshots/Component.js)
