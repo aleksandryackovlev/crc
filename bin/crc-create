@@ -348,7 +348,7 @@ addProps() {
     propsOutput="${propsOutput}\1\}"
     propTypesOutput="${propTypesOutput}\};\n"
 
-    output="s/^\(${indentation}*\)\(.*\)$(crc-env propsPlaceholder)/$propsOutput/g; "
+    output="s/^\($(crc-env indentationPlaceholder)*\)\(.*\)$(crc-env propsPlaceholder)/$propsOutput/g; "
     output="${output}s/$(crc-env propTypesImportPlaceholder)/import PropTypes from 'prop-types';/g; "
     output="${output}s/$(crc-env propTypesDefinitionPlaceholder)/$propTypesOutput/g; "
 
@@ -461,9 +461,9 @@ crc-create() {
   stylesFile="$directory"/"$stylesFile"
 
   sedCommands="$(replaceComponentName "$componentName"); $(addStylesOutput "$addCss" "$stylesFileExtention")"
-  sedCommands="$sedCommands""; $(replaceIndentation "$indentation")"
   sedCommands="$sedCommands""; $(addLifecycleMethods "$indentation" "$lifecycleMethods"); $(addHandlers "$indentation" "$handlers")"
   sedCommands="$sedCommands""; $(addMethods "$indentation" "$methods"); $(addProps "$indentation" "$componentName" "$@")"
+  sedCommands="$sedCommands""; $(replaceIndentation "$indentation")"
 
   createStylesFile "$addCss" "$stylesTemplate" "$componentName" "$stylesFile"
   createComponentFile "$sedCommands" "$componentTemplate" "$componentFile"
