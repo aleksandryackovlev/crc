@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 #: TITLE: crc-utils
-#: DATE: 2019-04-23
-#: VERSION: 0.1.0
+#: DATE: 2019-07-20
+#: VERSION: 0.1.1
 #: AUTHOR: "Alex Y" <aleksandryackovlev@yandex.ru>
 #: DESCRIPTION: Utils functions
 
